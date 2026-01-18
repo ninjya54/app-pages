@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>サポート - Music Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            padding: 40px 20px;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            color: #444;
+            margin: 24px 0 12px;
+            font-size: 1.2em;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 16px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .faq {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .faq-q {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .contact-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .contact-box a {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← 戻る</a>
+        <h1>サポート</h1>
+
+        <h2>よくある質問</h2>
+
+        <div class="faq">
+            <p class="faq-q">Q: 音楽ファイルが表示されません</p>
+            <p>A: アプリに「メディアへのアクセス」権限が付与されているか確認してください。設定 → アプリ → Music Player → 権限 から確認できます。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: ビジュアライザーが動作しません</p>
+            <p>A: 「マイク」権限が必要です。この権限は音楽を解析するために使用され、音声の録音は行いません。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: Bluetoothデバイスで再生できません</p>
+            <p>A: Bluetoothデバイスがペアリングされ、メディアオーディオとして接続されているか確認してください。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: バックグラウンドで再生が止まります</p>
+            <p>A: デバイスのバッテリー最適化からMusic Playerを除外してください。</p>
+        </div>
+
+        <div class="contact-box">
+            <h2 style="margin-top: 0;">お問い合わせ</h2>
+            <p>その他のご質問やバグ報告は、以下のメールアドレスまでご連絡ください。</p>
+            <p><a href="mailto:support@example.com">support@example.com</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
