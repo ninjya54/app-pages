@@ -1,0 +1,2409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UpscalePlayer アーキテクチャ</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg-dark: #1e1e2e;
+            --bg-card: #2a2a3e;
+            --bg-light: #3a3a4e;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #4a4a5e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.2em;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 .icon {
+            font-size: 1.5em;
+        }
+
+        /* Flow Diagram */
+        .flow-container {
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+
+        .flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 800px;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            min-width: 140px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .flow-step .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .flow-step .label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .flow-step .tech {
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+
+        .flow-arrow {
+            font-size: 1.5em;
+            color: var(--accent);
+        }
+
+        /* Pipeline */
+        .pipeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .pipeline-line {
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .pipeline-number {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        .pipeline-content {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-left: 20px;
+            flex: 1;
+        }
+
+        .pipeline-content h3 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        /* Cards Grid */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 25px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+        }
+
+        .card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .card .icon {
+            font-size: 1.5em;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.9em;
+        }
+
+        .code-block .keyword { color: #c792ea; }
+        .code-block .function { color: #82aaff; }
+        .code-block .string { color: #c3e88d; }
+        .code-block .comment { color: #676e95; }
+        .code-block .type { color: #ffcb6b; }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-light);
+            color: var(--primary);
+        }
+
+        tr:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Filter Order Animation */
+        .filter-chain {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .filter-item {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .filter-item:hover {
+            transform: scale(1.1);
+        }
+
+        .filter-item:nth-child(2) { animation-delay: 0.2s; }
+        .filter-item:nth-child(3) { animation-delay: 0.4s; }
+        .filter-item:nth-child(4) { animation-delay: 0.6s; }
+        .filter-item:nth-child(5) { animation-delay: 0.8s; }
+        .filter-item:nth-child(6) { animation-delay: 1.0s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .filter-arrow {
+            display: flex;
+            align-items: center;
+            color: var(--accent);
+            font-size: 1.5em;
+        }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .arch-box {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .arch-box:hover {
+            border-color: var(--primary);
+        }
+
+        .arch-box.highlight {
+            border-color: var(--secondary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .arch-box h4 {
+            margin-bottom: 10px;
+        }
+
+        .arch-box .files {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        /* SVG Icons */
+        .svg-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 10px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: var(--bg-light);
+            border: none;
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tab:hover, .tab.active {
+            background: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* File Tree */
+        .file-tree {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .file-tree ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .file-tree > ul {
+            padding-left: 0;
+        }
+
+        .file-tree li {
+            padding: 5px 0;
+        }
+
+        .folder { color: var(--accent); }
+        .file { color: var(--text-muted); }
+        .file-swift { color: #f05138; }
+        .file-metal { color: #8e44ad; }
+
+        /* Animation */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* GPU Animation */
+        .gpu-animation {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .gpu-core {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            animation: gpuPulse 1.5s infinite;
+        }
+
+        .gpu-core:nth-child(2) { animation-delay: 0.3s; }
+        .gpu-core:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes gpuPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .data-flow {
+            display: flex;
+            align-items: center;
+        }
+
+        .data-particle {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: flowRight 1s infinite linear;
+        }
+
+        .data-particle:nth-child(2) { animation-delay: 0.2s; }
+        .data-particle:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes flowRight {
+            0% { transform: translateX(-20px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(20px); opacity: 0; }
+        }
+
+        /* Simulation boxes */
+        .sim-box {
+            text-align: center;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .arch-diagram {
+                grid-template-columns: 1fr;
+            }
+
+            .flow {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            #simulation-display {
+                flex-direction: column;
+            }
+
+            #simulation-display > div:not(.sim-box) {
+                transform: rotate(90deg) !important;
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-dark);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            z-index: 100;
+        }
+
+        /* Progress indicator */
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            animation: progressAnim 2s infinite;
+        }
+
+        @keyframes progressAnim {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="animate-in">
+            <h1>UpscalePlayer</h1>
+            <p>リアルタイム動画アップスケーリング アーキテクチャ</p>
+        </header>
+
+        <!-- Overview -->
+        <section class="section animate-in" style="animation-delay: 0.1s;">
+            <h2><span class="icon">🎬</span> 概要</h2>
+            <p>UpscalePlayerは、iOSデバイス上でMetal GPUを活用したリアルタイム動画アップスケーリングを実現するアプリケーションです。低解像度の動画を高品質に拡大しながら、60fpsでスムーズに再生します。</p>
+
+            <div class="gpu-animation">
+                <div class="gpu-core">🎥</div>
+                <div class="data-flow">
+                    <div class="data-particle"></div>
+                    <div class="data-particle"></div>
+                    <div class="data-particle"></div>
+                </div>
+                <div class="gpu-core">⚡</div>
+                <div class="data-flow">
+                    <div class="data-particle"></div>
+                    <div class="data-particle"></div>
+                    <div class="data-particle"></div>
+                </div>
+                <div class="gpu-core">📺</div>
+            </div>
+            <p style="text-align: center; color: var(--text-muted);">動画 → GPU処理 → 画面表示</p>
+        </section>
+
+        <!-- Main Flow -->
+        <section class="section animate-in" style="animation-delay: 0.2s;">
+            <h2><span class="icon">🔄</span> 全体処理フロー</h2>
+            <div class="flow-container">
+                <div class="flow">
+                    <div class="flow-step" onclick="showDetail('video')">
+                        <div class="icon">📁</div>
+                        <div class="label">動画ファイル</div>
+                        <div class="tech">mp4, mov, mkv...</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step" onclick="showDetail('avplayer')">
+                        <div class="icon">▶️</div>
+                        <div class="label">AVPlayer</div>
+                        <div class="tech">デコード</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step" onclick="showDetail('pixelbuffer')">
+                        <div class="icon">🖼️</div>
+                        <div class="label">CVPixelBuffer</div>
+                        <div class="tech">BGRA 32bit</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step" onclick="showDetail('texture')">
+                        <div class="icon">🔲</div>
+                        <div class="label">MTLTexture</div>
+                        <div class="tech">GPU メモリ</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step" onclick="showDetail('gpu')">
+                        <div class="icon">⚡</div>
+                        <div class="label">GPU処理</div>
+                        <div class="tech">Metal Shaders</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step" onclick="showDetail('display')">
+                        <div class="icon">📱</div>
+                        <div class="label">画面表示</div>
+                        <div class="tech">60fps</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="detail-panel" style="margin-top: 20px; display: none;">
+                <div class="card">
+                    <h3 id="detail-title"></h3>
+                    <p id="detail-content"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Components -->
+        <section class="section animate-in" style="animation-delay: 0.3s;">
+            <h2><span class="icon">🧩</span> 主要コンポーネント</h2>
+
+            <div class="arch-diagram">
+                <div class="arch-box">
+                    <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3" fill="var(--primary)"/>
+                    </svg>
+                    <h4>VideoPlayerController</h4>
+                    <p>動画デコード・再生制御</p>
+                    <div class="files">VideoPlayerController.swift</div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+                <div class="arch-box highlight">
+                    <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" fill="var(--secondary)"/>
+                        <path d="M9 9h6M9 12h6M9 15h6" stroke="white"/>
+                    </svg>
+                    <h4>MetalVideoRenderer</h4>
+                    <p>GPUフレーム処理</p>
+                    <div class="files">MetalVideoRenderer.swift</div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+                <div class="arch-box">
+                    <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="9" fill="var(--accent)"/>
+                        <path d="M12 8v8M8 12h8" stroke="white" stroke-width="2"/>
+                    </svg>
+                    <h4>UpscalingEngine</h4>
+                    <p>アルゴリズム選択・統括</p>
+                    <div class="files">UpscalingEngine.swift</div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upscalers -->
+        <section class="section animate-in" style="animation-delay: 0.4s;">
+            <h2><span class="icon">🔍</span> アップスケーラーの種類</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('mps')">MPSUpscaler</button>
+                <button class="tab" onclick="showTab('metal')">MetalUpscaler</button>
+                <button class="tab" onclick="showTab('coreml')">CoreMLUpscaler</button>
+            </div>
+
+            <div id="tab-mps" class="tab-content active">
+                <div class="cards">
+                    <div class="card">
+                        <h3><span class="icon">⚡</span> 高速処理</h3>
+                        <p>Apple標準のMetal Performance Shadersを使用。ハードウェア最適化済みで最も高速。</p>
+                        <table>
+                            <tr><th>クラス</th><th>用途</th></tr>
+                            <tr><td>MPSImageBilinearScale</td><td>バイリニア補間（最速）</td></tr>
+                            <tr><td>MPSImageLanczosScale</td><td>ランチョス補間（高品質）</td></tr>
+                            <tr><td>MPSImageGaussianBlur</td><td>ノイズ除去</td></tr>
+                            <tr><td>MPSImageConvolution</td><td>シャープニング</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-metal" class="tab-content">
+                <div class="cards">
+                    <div class="card">
+                        <h3><span class="icon">🎨</span> カスタムシェーダー</h3>
+                        <p>独自のMetal Compute Shaderによる高度な処理。</p>
+                        <table>
+                            <tr><th>シェーダー</th><th>説明</th></tr>
+                            <tr><td>bicubicUpscale</td><td>4x4ピクセル領域のキュービック補間</td></tr>
+                            <tr><td>lanczosUpscale</td><td>6x6ピクセル、sinc関数ベース</td></tr>
+                            <tr><td>edgeAwareUpscale</td><td>Sobelエッジ検出+適応補間</td></tr>
+                            <tr><td>sharpenTexture</td><td>アンシャープマスク</td></tr>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <h3><span class="icon">✨</span> Animeフィルター</h3>
+                        <p>アニメ映像に特化した画質改善フィルター群。</p>
+                        <table>
+                            <tr><th>フィルター</th><th>効果</th></tr>
+                            <tr><td>animeLineDarken</td><td>線画を検出して強調</td></tr>
+                            <tr><td>animeLineThin</td><td>線画を細くシャープに</td></tr>
+                            <tr><td>animeBilateralDenoise</td><td>エッジ保持デノイズ</td></tr>
+                            <tr><td>animeColorBoost</td><td>フラット領域の彩度強調</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-coreml" class="tab-content">
+                <div class="cards">
+                    <div class="card">
+                        <h3><span class="icon">🤖</span> AI超解像</h3>
+                        <p>Core Image + CIFilterによる高度な画像処理。将来的にはESRGAN等のMLモデルを統合可能。</p>
+                        <div class="code-block">
+<span class="comment">// 処理パイプライン</span>
+<span class="keyword">func</span> <span class="function">upscaleWithFilters</span>(image) {
+    result = <span class="function">scaleTransform</span>(image)    <span class="comment">// スケール</span>
+    result = <span class="function">enhanceEdges</span>(result)     <span class="comment">// エッジ強調</span>
+    result = <span class="function">applyUnsharpMask</span>(result) <span class="comment">// シャープ</span>
+    result = <span class="function">reduceNoise</span>(result)      <span class="comment">// ノイズ除去</span>
+    result = <span class="function">enhanceColors</span>(result)    <span class="comment">// 色強調</span>
+    <span class="keyword">return</span> result
+}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Pipeline -->
+        <section class="section animate-in" style="animation-delay: 0.5s;">
+            <h2><span class="icon">🎛️</span> フィルター適用順序</h2>
+            <p style="margin-bottom: 20px;">フィルターは以下の順序で適用されます（左から右へ）：</p>
+
+            <div class="filter-chain">
+                <div class="filter-item" data-tip="解像度を拡大">1. アップスケーリング</div>
+                <div class="filter-arrow">→</div>
+                <div class="filter-item" data-tip="アニメ専用フィルター">2. Anime Filter</div>
+                <div class="filter-arrow">→</div>
+                <div class="filter-item" data-tip="明るさ・コントラスト">3. Brightness/Contrast</div>
+                <div class="filter-arrow">→</div>
+                <div class="filter-item" data-tip="スマート彩度">4. Vibrance</div>
+                <div class="filter-arrow">→</div>
+                <div class="filter-item" data-tip="フィルム風粒子">5. Film Grain</div>
+                <div class="filter-arrow">→</div>
+                <div class="filter-item" data-tip="VR/360度投影">6. VR Projection</div>
+            </div>
+        </section>
+
+        <!-- Processing Pipeline -->
+        <section class="section animate-in" style="animation-delay: 0.6s;">
+            <h2><span class="icon">⚙️</span> GPU処理パイプライン</h2>
+
+            <div class="pipeline">
+                <div class="pipeline-line"></div>
+
+                <div class="pipeline-step">
+                    <div class="pipeline-number">1</div>
+                    <div class="pipeline-content">
+                        <h3>CVPixelBuffer → MTLTexture 変換</h3>
+                        <p><code>CVMetalTextureCacheCreateTextureFromImage</code>を使用したゼロコピー変換。CPU/GPU間のメモリコピーを回避し、高速処理を実現。</p>
+                    </div>
+                </div>
+
+                <div class="pipeline-step">
+                    <div class="pipeline-number">2</div>
+                    <div class="pipeline-content">
+                        <h3>Fast Path チェック</h3>
+                        <p>フィルターが全てOFFの場合、GPU処理をスキップしてソーステクスチャを直接使用。不要な処理を回避。</p>
+                        <div class="code-block">
+<span class="keyword">if</span> !needsUpscaling && !needsBrightness && !needsVibrance ... {
+    <span class="keyword">self</span>.currentTexture = sourceTexture  <span class="comment">// 処理スキップ</span>
+    <span class="keyword">return</span>
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pipeline-step">
+                    <div class="pipeline-number">3</div>
+                    <div class="pipeline-content">
+                        <h3>アップスケーリング実行</h3>
+                        <p>選択されたアルゴリズム（Bilinear/Bicubic/Lanczos/AI）でテクスチャを拡大。</p>
+                    </div>
+                </div>
+
+                <div class="pipeline-step">
+                    <div class="pipeline-number">4</div>
+                    <div class="pipeline-content">
+                        <h3>フィルター適用</h3>
+                        <p>Metal Compute Shaderで各フィルターを順次適用。GPUの並列処理能力を活用。</p>
+                    </div>
+                </div>
+
+                <div class="pipeline-step">
+                    <div class="pipeline-number">5</div>
+                    <div class="pipeline-content">
+                        <h3>画面表示</h3>
+                        <p><code>MTKView</code>のdrawableにテクスチャをコピーし、<code>present()</code>で表示。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance -->
+        <section class="section animate-in" style="animation-delay: 0.7s;">
+            <h2><span class="icon">🚀</span> パフォーマンス最適化</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <h3><span class="icon">⚡</span> Fast Path</h3>
+                    <p>フィルター不要時は処理をスキップ。CPU/GPU両方の負荷を削減。</p>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">💾</span> テクスチャキャッシュ</h3>
+                    <p>CVMetalTextureCacheによるゼロコピー変換。メモリコピーを排除。</p>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">♻️</span> テクスチャ再利用</h3>
+                    <p>サイズ変更時のみ新規作成。毎フレームの割り当てを回避。</p>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">🔄</span> 非同期GPU実行</h3>
+                    <p><code>waitUntilCompleted()</code>を削除。CPU/GPUが並列動作。</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">CPU/GPU並列処理イメージ</h3>
+                <div class="code-block" style="font-size: 0.85em;">
+<span class="comment">フレームN:   </span>[CPU: フレーム取得] → [GPU: 処理] → [GPU: 表示]
+<span class="comment">フレームN+1:</span>                      [CPU: フレーム取得] → [GPU: 処理] → [GPU: 表示]
+                                  <span class="string">↑</span>
+                         <span class="string">CPU/GPUが同時に動作（パイプライン処理）</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Structure -->
+        <section class="section animate-in" style="animation-delay: 0.8s;">
+            <h2><span class="icon">📂</span> ファイル構成</h2>
+
+            <div class="file-tree">
+                <ul>
+                    <li><span class="folder">📁 UpscalePlayer/</span>
+                        <ul>
+                            <li><span class="folder">📁 App/</span>
+                                <ul>
+                                    <li><span class="file-swift">📄 UpscalePlayerApp.swift</span> <span class="file">- アプリエントリーポイント</span></li>
+                                </ul>
+                            </li>
+                            <li><span class="folder">📁 Models/</span>
+                                <ul>
+                                    <li><span class="file-swift">📄 DeviceCapability.swift</span> <span class="file">- デバイス能力検出</span></li>
+                                    <li><span class="file-swift">📄 PerformanceMonitor.swift</span> <span class="file">- CPU/メモリ監視</span></li>
+                                    <li><span class="file-swift">📄 UpscalingQuality.swift</span> <span class="file">- 設定データ構造</span></li>
+                                </ul>
+                            </li>
+                            <li><span class="folder">📁 Shaders/</span>
+                                <ul>
+                                    <li><span class="file-metal">📄 Upscaling.metal</span> <span class="file">- Metal Compute Shaders</span></li>
+                                </ul>
+                            </li>
+                            <li><span class="folder">📁 Upscaling/</span>
+                                <ul>
+                                    <li><span class="file-swift">📄 CoreMLUpscaler.swift</span> <span class="file">- AI超解像</span></li>
+                                    <li><span class="file-swift">📄 MetalUpscaler.swift</span> <span class="file">- カスタムシェーダー</span></li>
+                                    <li><span class="file-swift">📄 MPSUpscaler.swift</span> <span class="file">- MPS高速処理</span></li>
+                                    <li><span class="file-swift">📄 UpscalingEngine.swift</span> <span class="file">- 統括エンジン</span></li>
+                                </ul>
+                            </li>
+                            <li><span class="folder">📁 VideoPlayer/</span>
+                                <ul>
+                                    <li><span class="file-swift">📄 MetalVideoRenderer.swift</span> <span class="file">- GPUレンダラー</span></li>
+                                    <li><span class="file-swift">📄 VideoPlayerController.swift</span> <span class="file">- 再生制御</span></li>
+                                </ul>
+                            </li>
+                            <li><span class="folder">📁 Views/</span>
+                                <ul>
+                                    <li><span class="file-swift">📄 PlayerView.swift</span> <span class="file">- 再生画面</span></li>
+                                    <li><span class="file-swift">📄 SettingsView.swift</span> <span class="file">- 設定画面</span></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="section animate-in" style="animation-delay: 0.9s;">
+            <h2><span class="icon">🛠️</span> 技術スタック</h2>
+
+            <table>
+                <tr>
+                    <th>カテゴリ</th>
+                    <th>技術</th>
+                    <th>用途</th>
+                </tr>
+                <tr>
+                    <td>UI</td>
+                    <td>SwiftUI, UIKit</td>
+                    <td>ユーザーインターフェース</td>
+                </tr>
+                <tr>
+                    <td>動画デコード</td>
+                    <td>AVFoundation</td>
+                    <td>AVPlayer, AVAsset による動画読み込み・デコード</td>
+                </tr>
+                <tr>
+                    <td>GPU処理</td>
+                    <td>Metal, MetalKit, MPS</td>
+                    <td>リアルタイム画像処理・アップスケーリング</td>
+                </tr>
+                <tr>
+                    <td>画像処理</td>
+                    <td>Core Image, Core Video</td>
+                    <td>フィルター・ピクセルバッファ管理</td>
+                </tr>
+                <tr>
+                    <td>機械学習</td>
+                    <td>Core ML</td>
+                    <td>将来のAI超解像モデル統合用</td>
+                </tr>
+                <tr>
+                    <td>フレーム同期</td>
+                    <td>CADisplayLink</td>
+                    <td>60Hz画面リフレッシュ同期</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Metal Shaders Deep Dive -->
+        <section class="section animate-in" style="animation-delay: 1.0s;">
+            <h2><span class="icon">⚙️</span> Metal Shader 詳細解説</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showShaderTab('bicubic')">Bicubic補間</button>
+                <button class="tab" onclick="showShaderTab('lanczos')">Lanczos補間</button>
+                <button class="tab" onclick="showShaderTab('anime')">Animeフィルター</button>
+                <button class="tab" onclick="showShaderTab('vr')">VR投影</button>
+            </div>
+
+            <div id="shader-bicubic" class="tab-content active">
+                <h3>Bicubic (バイキュービック) 補間</h3>
+                <p>4×4ピクセルの領域から、3次多項式による重み付きサンプリングを行います。</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                    <div>
+                        <h4>サンプリング範囲</h4>
+                        <div style="background: #1a1a2e; padding: 20px; border-radius: 8px; text-align: center;">
+                            <svg viewBox="0 0 200 200" style="max-width: 300px;">
+                                <!-- Grid -->
+                                <defs>
+                                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#444" stroke-width="1"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="200" height="200" fill="url(#grid)"/>
+
+                                <!-- 4x4 sample area -->
+                                <rect x="40" y="40" width="120" height="120" fill="rgba(99, 102, 241, 0.2)" stroke="var(--primary)" stroke-width="2"/>
+
+                                <!-- Sample points -->
+                                <circle cx="60" cy="60" r="4" fill="var(--accent)"/>
+                                <circle cx="100" cy="60" r="4" fill="var(--accent)"/>
+                                <circle cx="140" cy="60" r="4" fill="var(--accent)"/>
+                                <circle cx="60" cy="100" r="4" fill="var(--accent)"/>
+                                <circle cx="100" cy="100" r="6" fill="var(--secondary)"/>
+                                <circle cx="140" cy="100" r="4" fill="var(--accent)"/>
+                                <circle cx="60" cy="140" r="4" fill="var(--accent)"/>
+                                <circle cx="100" cy="140" r="4" fill="var(--accent)"/>
+                                <circle cx="140" cy="140" r="4" fill="var(--accent)"/>
+
+                                <text x="100" y="190" text-anchor="middle" fill="var(--text)" font-size="12">中心ピクセル + 周囲15ピクセル</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>処理コード</h4>
+                        <div class="code-block">
+<span class="keyword">kernel void</span> <span class="function">bicubicUpscale</span>(...) {
+    <span class="comment">// 4x4サンプリング</span>
+    <span class="keyword">for</span> (<span class="type">int</span> y = -<span class="string">1</span>; y &lt;= <span class="string">2</span>; y++) {
+        <span class="keyword">for</span> (<span class="type">int</span> x = -<span class="string">1</span>; x &lt;= <span class="string">2</span>; x++) {
+            <span class="type">float</span> weightX = <span class="function">cubicWeight</span>(x - frac.x);
+            <span class="type">float</span> weightY = <span class="function">cubicWeight</span>(y - frac.y);
+            <span class="type">float</span> weight = weightX * weightY;
+
+            color += texture.<span class="function">read</span>(samplePos) * weight;
+        }
+    }
+}
+                        </div>
+                        <p style="margin-top: 10px; font-size: 0.9em;">特徴: バイリニアより滑らか、ランチョスより高速</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="shader-lanczos" class="tab-content">
+                <h3>Lanczos (ランチョス) 補間</h3>
+                <p>Lanczos-3アルゴリズムは6×6ピクセル領域から、sinc関数による重み付きサンプリング。最高品質。</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                    <div>
+                        <h4>Sinc関数の重み</h4>
+                        <div style="background: #1a1a2e; padding: 20px; border-radius: 8px;">
+                            <svg viewBox="0 0 300 200" style="max-width: 400px;">
+                                <!-- Axes -->
+                                <line x1="30" y1="100" x2="270" y2="100" stroke="var(--border)" stroke-width="2"/>
+                                <line x1="150" y1="20" x2="150" y2="180" stroke="var(--border)" stroke-width="2"/>
+
+                                <!-- Sinc curve -->
+                                <path d="M 30 100 Q 90 60, 120 90 T 150 100 T 180 110 T 210 105 T 240 102 T 270 100"
+                                      fill="none" stroke="var(--primary)" stroke-width="3"/>
+
+                                <!-- Labels -->
+                                <text x="150" y="15" text-anchor="middle" fill="var(--text)" font-size="12">Lanczos Weight</text>
+                                <text x="30" y="115" fill="var(--text-muted)" font-size="10">-3</text>
+                                <text x="150" y="115" fill="var(--text-muted)" font-size="10">0</text>
+                                <text x="260" y="115" fill="var(--text-muted)" font-size="10">3</text>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>重み計算式</h4>
+                        <div class="code-block">
+<span class="comment">// Lanczos window function</span>
+<span class="type">float</span> <span class="function">lanczosWeight</span>(<span class="type">float</span> x, <span class="type">float</span> a) {
+    <span class="keyword">if</span> (x == <span class="string">0.0</span>) <span class="keyword">return</span> <span class="string">1.0</span>;
+    <span class="keyword">if</span> (<span class="function">abs</span>(x) >= a) <span class="keyword">return</span> <span class="string">0.0</span>;
+
+    <span class="type">float</span> piX = PI * x;
+    <span class="type">float</span> piXOverA = piX / a;
+
+    <span class="comment">// sinc(x) * sinc(x/a)</span>
+    <span class="keyword">return</span> (<span class="function">sin</span>(piX) / piX) *
+           (<span class="function">sin</span>(piXOverA) / piXOverA);
+}
+                        </div>
+                        <p style="margin-top: 10px; font-size: 0.9em;">特徴: 最高品質、エッジが鮮明、処理負荷高</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="shader-anime" class="tab-content">
+                <h3>Anime Enhancement フィルター</h3>
+                <p>アニメ映像に特化した4段階の処理パイプライン</p>
+
+                <div class="pipeline">
+                    <div class="pipeline-line"></div>
+
+                    <div class="pipeline-step">
+                        <div class="pipeline-number" style="background: #e74c3c;">1</div>
+                        <div class="pipeline-content">
+                            <h3>Line Darken（線画強調）</h3>
+                            <p>周囲より暗いピクセルを検出し、さらに暗くすることで線画を強調します。</p>
+                            <div class="code-block">
+<span class="type">float</span> lineStrength = maxLuma - centerLuma;
+<span class="type">float</span> contrast = maxLuma - minLuma;
+
+<span class="keyword">if</span> (contrast > <span class="string">0.05</span> && lineStrength > <span class="string">0.1</span>) {
+    darkenAmount = lineStrength * strength * <span class="string">0.5</span>;
+}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="pipeline-number" style="background: #3498db;">2</div>
+                        <div class="pipeline-content">
+                            <h3>Bilateral Denoise（エッジ保持デノイズ）</h3>
+                            <p>エッジを保持しながらノイズを除去。アニメの平坦な領域を綺麗に。</p>
+                            <div class="code-block">
+<span class="comment">// 距離による重み × 色の類似度による重み</span>
+<span class="type">float</span> spatialWeight = <span class="function">exp</span>(-spatialDist² / spatialSigma²);
+<span class="type">float</span> rangeWeight = <span class="function">exp</span>(-colorDist² / rangeSigma²);
+<span class="type">float</span> weight = spatialWeight * rangeWeight;
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="pipeline-number" style="background: #9b59b6;">3</div>
+                        <div class="pipeline-content">
+                            <h3>Line Thin（線画細線化）</h3>
+                            <p>線画ピクセルを明るい方向にシフトして細くします。</p>
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step">
+                        <div class="pipeline-number" style="background: #2ecc71;">4</div>
+                        <div class="pipeline-content">
+                            <h3>Color Boost（色彩強調）</h3>
+                            <p>フラットな領域の彩度を上げて、アニメらしい鮮やかさを実現。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="shader-vr" class="tab-content">
+                <h3>VR/360° 投影変換</h3>
+                <p>Equirectangular（正距円筒図法）からPerspective（透視投影）への変換</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                    <div>
+                        <h4>処理ステップ</h4>
+                        <div class="code-block">
+<span class="comment">// 1. 画面座標 → 正規化座標</span>
+<span class="type">float2</span> ndc = uv * <span class="string">2.0</span> - <span class="string">1.0</span>;
+
+<span class="comment">// 2. 視線ベクトル作成</span>
+<span class="type">float3</span> rayDir = <span class="function">normalize</span>(
+    <span class="type">float3</span>(ndc.x * aspect * tanHalfFov,
+            ndc.y * tanHalfFov,
+            <span class="string">1.0</span>)
+);
+
+<span class="comment">// 3. カメラ回転適用</span>
+rayDir = rotationMatrix * rayDir;
+
+<span class="comment">// 4. 球面座標に変換</span>
+<span class="type">float</span> phi = <span class="function">atan2</span>(rayDir.x, rayDir.z);
+<span class="type">float</span> theta = <span class="function">asin</span>(rayDir.y);
+
+<span class="comment">// 5. テクスチャUVに変換</span>
+sphereUV.x = <span class="string">0.5</span> + (phi / (<span class="string">2.0</span> * PI));
+sphereUV.y = <span class="string">0.5</span> + (theta / PI);
+                        </div>
+                    </div>
+                    <div>
+                        <h4>投影イメージ</h4>
+                        <div style="background: #1a1a2e; padding: 20px; border-radius: 8px; text-align: center;">
+                            <svg viewBox="0 0 300 300" style="max-width: 350px;">
+                                <!-- Equirectangular texture (flat) -->
+                                <rect x="20" y="20" width="260" height="130" fill="none" stroke="var(--primary)" stroke-width="2" stroke-dasharray="5,5"/>
+                                <text x="150" y="95" text-anchor="middle" fill="var(--text-muted)" font-size="12">Equirectangular</text>
+
+                                <!-- Arrow -->
+                                <path d="M 150 160 L 150 180" stroke="var(--accent)" stroke-width="3" marker-end="url(#arrowhead)"/>
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                        <polygon points="0 0, 10 5, 0 10" fill="var(--accent)"/>
+                                    </marker>
+                                </defs>
+
+                                <!-- Perspective view (3D-ish) -->
+                                <path d="M 80 200 L 150 250 L 220 200 L 150 200 Z" fill="rgba(99, 102, 241, 0.3)" stroke="var(--primary)" stroke-width="2"/>
+                                <circle cx="150" cy="220" r="3" fill="var(--secondary)"/>
+                                <text x="150" y="275" text-anchor="middle" fill="var(--text-muted)" font-size="12">Perspective View</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>対応フォーマット</h3>
+                    <table>
+                        <tr><th>モード</th><th>説明</th></tr>
+                        <tr><td>VR360</td><td>全天球（360°×180°）マッピング</td></tr>
+                        <tr><td>VR180</td><td>半球（180°×180°）マッピング</td></tr>
+                        <tr><td>SBS (Side-by-Side)</td><td>左右分割ステレオ</td></tr>
+                        <tr><td>TaB (Top-and-Bottom)</td><td>上下分割ステレオ</td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Algorithm Comparison -->
+        <section class="section animate-in" style="animation-delay: 1.1s;">
+            <h2><span class="icon">📊</span> アルゴリズム比較</h2>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <tr>
+                        <th>アルゴリズム</th>
+                        <th>速度</th>
+                        <th>品質</th>
+                        <th>エッジ保持</th>
+                        <th>推奨用途</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Bilinear</strong></td>
+                        <td><div style="background: var(--secondary); width: 95%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 50%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 40%; height: 20px; border-radius: 4px;"></div></td>
+                        <td>リアルタイムプレビュー</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bicubic</strong></td>
+                        <td><div style="background: var(--secondary); width: 80%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 75%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 70%; height: 20px; border-radius: 4px;"></div></td>
+                        <td>バランス型、汎用</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lanczos</strong></td>
+                        <td><div style="background: var(--secondary); width: 60%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 95%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 90%; height: 20px; border-radius: 4px;"></div></td>
+                        <td>高品質、写真・実写</td>
+                    </tr>
+                    <tr>
+                        <td><strong>EdgeAware</strong></td>
+                        <td><div style="background: var(--secondary); width: 55%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 85%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 95%; height: 20px; border-radius: 4px;"></div></td>
+                        <td>文字、UI、グラフィック</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Anime4K</strong></td>
+                        <td><div style="background: var(--secondary); width: 50%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 90%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 95%; height: 20px; border-radius: 4px;"></div></td>
+                        <td>アニメ専用</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MLSR (AI)</strong></td>
+                        <td><div style="background: var(--secondary); width: 30%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 98%; height: 20px; border-radius: 4px;"></div></td>
+                        <td><div style="background: var(--accent); width: 98%; height: 20px; border-radius: 4px;"></div></td>
+                        <td>最高品質、静止画</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- Performance Metrics -->
+        <section class="section animate-in" style="animation-delay: 1.2s;">
+            <h2><span class="icon">⏱️</span> パフォーマンスメトリクス</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <h3><span class="icon">🎯</span> 目標フレームレート</h3>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3em; font-weight: bold; color: var(--secondary);">60fps</div>
+                        <p style="color: var(--text-muted);">16.67ms / frame</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">💾</span> メモリ使用量</h3>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 2.5em; font-weight: bold; color: var(--primary);">~200MB</div>
+                        <p style="color: var(--text-muted);">1080p動画処理時</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">⚡</span> GPU使用率</h3>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 2.5em; font-weight: bold; color: var(--accent);">40-70%</div>
+                        <p style="color: var(--text-muted);">フィルター有効時</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 30px 0 15px 0;">処理時間の内訳（1フレームあたり）</h3>
+            <div style="background: #1a1a2e; padding: 20px; border-radius: 8px;">
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>フレーム取得</span>
+                        <span>0.5ms</span>
+                    </div>
+                    <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: var(--primary); width: 3%; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>テクスチャ変換</span>
+                        <span>1.0ms</span>
+                    </div>
+                    <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: var(--primary); width: 6%; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>アップスケーリング</span>
+                        <span>8.0ms</span>
+                    </div>
+                    <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: var(--secondary); width: 48%; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>フィルター適用</span>
+                        <span>4.0ms</span>
+                    </div>
+                    <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: var(--accent); width: 24%; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>画面表示</span>
+                        <span>2.0ms</span>
+                    </div>
+                    <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: var(--primary); width: 12%; height: 100%;"></div>
+                    </div>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                        <span>合計</span>
+                        <span>15.5ms (64.5 fps)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section class="section animate-in" style="animation-delay: 1.3s;">
+            <h2><span class="icon">🔧</span> トラブルシューティング</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <h3><span class="icon">🐢</span> フレーム落ちする</h3>
+                    <ul style="line-height: 2;">
+                        <li>✓ アップスケーリングをBilinearに変更</li>
+                        <li>✓ フィルターを無効化</li>
+                        <li>✓ 目標解像度を下げる</li>
+                        <li>✓ バックグラウンドアプリを終了</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">🌡️</span> 発熱が激しい</h3>
+                    <ul style="line-height: 2;">
+                        <li>✓ GPUインテンシブな設定を下げる</li>
+                        <li>✓ Anime4Kフィルターを無効化</li>
+                        <li>✓ フレームレートを30fpsに制限</li>
+                        <li>✓ 明るさを下げる</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">🖼️</span> 画質が悪い</h3>
+                    <ul style="line-height: 2;">
+                        <li>✓ Lanczosアルゴリズムを試す</li>
+                        <li>✓ Sharpnessを上げる</li>
+                        <li>✓ アンチエイリアスを有効化</li>
+                        <li>✓ ソース動画の品質を確認</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Future Extensions -->
+        <section class="section animate-in" style="animation-delay: 1.4s;">
+            <h2><span class="icon">🚀</span> 今後の拡張可能性</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <h3><span class="icon">🤖</span> Real-ESRGAN統合</h3>
+                    <p>最先端のAI超解像モデルをCore MLとして統合。4K→8Kの超高解像度化に対応。</p>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 6px;">
+                        <strong>実装計画:</strong> ESRGANモデルをCoreMLTools でコンバート → CoreMLUpscalerに統合
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">🎨</span> HDR対応</h3>
+                    <p>High Dynamic Range動画のサポート。Wide Color Gamut (P3/Rec.2020) に対応。</p>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                        <strong>技術:</strong> RGBA16Float テクスチャフォーマット、EDR (Extended Dynamic Range)
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">🎬</span> 120Hz ProMotion対応 - フレーム補間</h3>
+
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <strong>🎯 現状:</strong> ProMotionディスプレイで120Hz動作可能だが、60fpsフレームを重複表示するのみ<br>
+                        <strong>✨ 目標:</strong> 真の120fps再生（60fps → 120fps 補間）
+                    </div>
+
+                    <h4 style="margin-top: 15px; color: var(--accent);">実装オプション</h4>
+
+                    <table style="margin-top: 10px; font-size: 0.9em;">
+                        <tr>
+                            <th>方式</th>
+                            <th>品質</th>
+                            <th>速度</th>
+                            <th>推奨機種</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Optical Flow</strong></td>
+                            <td>中</td>
+                            <td>⚡⚡⚡</td>
+                            <td>iPhone 13以降</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RIFE (AI/ML)</strong></td>
+                            <td>高</td>
+                            <td>⚡⚡</td>
+                            <td>iPhone 14 Pro以降</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DAIN (深度対応)</strong></td>
+                            <td>最高</td>
+                            <td>⚡</td>
+                            <td>iPhone 15 Pro以降</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(245, 158, 11, 0.1); border-radius: 6px;">
+                        <strong>実装コンセプト:</strong>
+                        <div class="code-block" style="margin-top: 8px; font-size: 0.85em;">
+<span class="keyword">if</span> videoOutput.<span class="function">hasNewPixelBuffer</span>(...) {
+    <span class="comment">// 新フレーム取得</span>
+    currentFrame = videoOutput.<span class="function">copyPixelBuffer</span>(...)
+} <span class="keyword">else if</span> enable120HzInterpolation {
+    <span class="comment">// 120Hzで中間フレーム生成</span>
+    interpolated = frameInterpolator.<span class="function">interpolate</span>(
+        previousFrame, currentFrame, alpha: <span class="string">0.5</span>
+    )
+}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 12px; padding: 10px; background: rgba(220, 38, 38, 0.1); border-radius: 6px;">
+                        <strong>⚠️ パフォーマンス影響:</strong><br>
+                        • GPU使用率: +40-60%<br>
+                        • 消費電力: +30-50%<br>
+                        • バッテリー駆動時は60Hzに自動切り替え推奨
+                    </div>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">🎮</span> インタラクティブVR</h3>
+                    <p>ジャイロセンサーによるVR視点制御。ピンチジェスチャーでFOV調整。</p>
+                    <div style="margin-top: 15px; padding: 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px;">
+                        <strong>技術:</strong> CMMotionManager、UIGestureRecognizer連携
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Technologies -->
+        <section class="section animate-in" style="animation-delay: 1.5s;">
+            <h2><span class="icon">💡</span> 使用している主要技術の詳細</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="card">
+                    <h3>CVMetalTextureCache</h3>
+                    <p>Core VideoとMetalの橋渡し。ゼロコピーでピクセルバッファをGPUテクスチャに変換。</p>
+                    <div class="code-block" style="margin-top: 10px;">
+CVMetalTextureCacheCreateTextureFromImage(
+    <span class="type">kCFAllocatorDefault</span>,
+    textureCache,
+    pixelBuffer,
+    <span class="type">nil</span>,
+    .bgra8Unorm,
+    width, height,
+    <span class="string">0</span>,
+    &cvMetalTexture
+)
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Metal Compute Pipeline</h3>
+                    <p>GPUでの汎用計算。Compute Shaderをコンパイル・実行するパイプライン。</p>
+                    <div class="code-block" style="margin-top: 10px;">
+<span class="keyword">let</span> pipeline = device.<span class="function">makeComputePipelineState</span>(
+    function: library.<span class="function">makeFunction</span>(name: <span class="string">"bicubicUpscale"</span>)
+)
+encoder.<span class="function">setComputePipelineState</span>(pipeline)
+encoder.<span class="function">dispatchThreadgroups</span>(...)
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>CADisplayLink</h3>
+                    <p>画面リフレッシュレート（60Hz/120Hz）に同期したタイマー。</p>
+                    <div class="code-block" style="margin-top: 10px;">
+displayLink = <span class="type">CADisplayLink</span>(
+    target: <span class="keyword">self</span>,
+    selector: <span class="type">#selector</span>(displayLinkCallback)
+)
+displayLink.<span class="function">add</span>(to: .<span class="string">main</span>, forMode: .<span class="string">common</span>)
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>AVPlayerItemVideoOutput</h3>
+                    <p>AVPlayerから各フレームをCVPixelBufferとして取得。Metal互換フォーマット指定可能。</p>
+                    <div class="code-block" style="margin-top: 10px;">
+<span class="keyword">let</span> output = <span class="type">AVPlayerItemVideoOutput</span>(
+    outputSettings: [
+        <span class="type">kCVPixelBufferPixelFormatTypeKey</span>: <span class="type">kCVPixelFormatType_32BGRA</span>,
+        <span class="type">kCVPixelBufferMetalCompatibilityKey</span>: <span class="keyword">true</span>
+    ]
+)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="section animate-in" style="animation-delay: 1.6s;">
+            <h2><span class="icon">📝</span> コード例: フレーム処理の実装</h2>
+
+            <h3 style="margin-bottom: 15px;">最適化前 vs 最適化後</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <h4 style="color: #e74c3c;">❌ 最適化前（問題あり）</h4>
+                    <div class="code-block">
+<span class="keyword">func</span> <span class="function">renderFrame</span>(pixelBuffer: <span class="type">CVPixelBuffer</span>) {
+    <span class="keyword">let</span> texture = <span class="function">createTexture</span>(pixelBuffer)
+
+    <span class="comment">// 毎フレーム新規テクスチャ作成 ❌</span>
+    <span class="keyword">let</span> outputTexture = <span class="function">createNewTexture</span>(size)
+
+    <span class="comment">// 同期的にGPU処理を待機 ❌</span>
+    commandBuffer.<span class="function">commit</span>()
+    commandBuffer.<span class="function">waitUntilCompleted</span>()
+
+    <span class="comment">// フィルターOFFでも処理実行 ❌</span>
+    <span class="function">applyFilters</span>(texture)
+
+    <span class="comment">// 毎フレームキャッシュフラッシュ ❌</span>
+    <span class="function">CVMetalTextureCacheFlush</span>(cache, <span class="string">0</span>)
+}
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--secondary);">✅ 最適化後（高速）</h4>
+                    <div class="code-block">
+<span class="keyword">func</span> <span class="function">renderFrame</span>(pixelBuffer: <span class="type">CVPixelBuffer</span>) {
+    <span class="keyword">let</span> texture = <span class="function">createTexture</span>(pixelBuffer)
+
+    <span class="comment">// Fast Path: フィルター不要時はスキップ ✅</span>
+    <span class="keyword">if</span> !needsProcessing {
+        currentTexture = texture
+        <span class="keyword">return</span>
+    }
+
+    <span class="comment">// テクスチャ再利用 ✅</span>
+    <span class="keyword">let</span> outputTexture = <span class="function">reuseTexture</span>(size)
+
+    <span class="comment">// 非同期実行（GPU並列化） ✅</span>
+    commandBuffer.<span class="function">commit</span>()
+    <span class="comment">// waitUntilCompleted() を削除 ✅</span>
+
+    <span class="comment">// 120フレームごとにキャッシュフラッシュ ✅</span>
+    <span class="keyword">if</span> frameCount % <span class="string">120</span> == <span class="string">0</span> {
+        <span class="function">CVMetalTextureCacheFlush</span>(cache, <span class="string">0</span>)
+    }
+}
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 4px solid var(--secondary);">
+                <strong>性能向上:</strong> フレームレート 25fps → 60fps（240%改善）、CPU使用率 85% → 45%
+            </div>
+        </section>
+
+        <!-- Interactive Demo -->
+        <section class="section animate-in" style="animation-delay: 1.7s;">
+            <h2><span class="icon">🎮</span> インタラクティブデモ</h2>
+
+            <div class="card">
+                <h3>GPU処理シミュレーション</h3>
+                <p>ボタンをクリックして処理フローを確認</p>
+
+                <div style="margin: 20px 0;">
+                    <button onclick="runSimulation()" style="background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1em; cursor: pointer; transition: transform 0.2s;">
+                        ▶ 処理を開始
+                    </button>
+                    <button onclick="resetSimulation()" style="background: var(--bg-light); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1em; cursor: pointer; margin-left: 10px;">
+                        🔄 リセット
+                    </button>
+                </div>
+
+                <div id="simulation-display" style="background: #1a1a2e; padding: 30px; border-radius: 8px; min-height: 200px; display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap;">
+                    <div id="sim-video" class="sim-box" style="opacity: 0.3;">
+                        <div style="font-size: 3em;">🎥</div>
+                        <div>動画フレーム</div>
+                    </div>
+                    <div style="font-size: 2em; opacity: 0.3;">→</div>
+                    <div id="sim-buffer" class="sim-box" style="opacity: 0.3;">
+                        <div style="font-size: 3em;">🖼️</div>
+                        <div>PixelBuffer</div>
+                    </div>
+                    <div style="font-size: 2em; opacity: 0.3;">→</div>
+                    <div id="sim-gpu" class="sim-box" style="opacity: 0.3;">
+                        <div style="font-size: 3em;">⚡</div>
+                        <div>GPU処理</div>
+                    </div>
+                    <div style="font-size: 2em; opacity: 0.3;">→</div>
+                    <div id="sim-display" class="sim-box" style="opacity: 0.3;">
+                        <div style="font-size: 3em;">📱</div>
+                        <div>画面表示</div>
+                    </div>
+                </div>
+
+                <div id="simulation-log" style="margin-top: 20px; background: #1a1a2e; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.9em; max-height: 200px; overflow-y: auto;">
+                    <div style="color: var(--text-muted);">処理ログがここに表示されます...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="section animate-in" style="animation-delay: 1.8s;">
+            <h2><span class="icon">📚</span> ベストプラクティス</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <h3><span class="icon">✅</span> 推奨事項</h3>
+                    <ul style="line-height: 2;">
+                        <li>📌 Fast Pathチェックを必ず実装</li>
+                        <li>📌 テクスチャはプールして再利用</li>
+                        <li>📌 waitUntilCompleted()は避ける</li>
+                        <li>📌 キャッシュフラッシュは控えめに</li>
+                        <li>📌 アルゴリズムは用途に応じて選択</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3><span class="icon">❌</span> アンチパターン</h3>
+                    <ul style="line-height: 2;">
+                        <li>⚠️ 毎フレームテクスチャを新規作成</li>
+                        <li>⚠️ GPU処理を同期的に待機</li>
+                        <li>⚠️ 不要な処理を常に実行</li>
+                        <li>⚠️ キャッシュを毎フレームフラッシュ</li>
+                        <li>⚠️ 過剰なフィルター適用</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- References -->
+        <section class="section animate-in" style="animation-delay: 1.9s;">
+            <h2><span class="icon">📖</span> 参考資料</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                <a href="https://developer.apple.com/metal/" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s;">
+                        <h4 style="color: var(--primary);">Metal Documentation</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">Apple公式のMetalフレームワークドキュメント</p>
+                    </div>
+                </a>
+                <a href="https://developer.apple.com/documentation/accelerate/metal_performance_shaders" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s;">
+                        <h4 style="color: var(--primary);">Metal Performance Shaders</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">MPSの公式リファレンス</p>
+                    </div>
+                </a>
+                <a href="https://developer.apple.com/av-foundation/" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s;">
+                        <h4 style="color: var(--primary);">AVFoundation</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">動画処理フレームワーク</p>
+                    </div>
+                </a>
+                <a href="https://github.com/bloc97/Anime4K" target="_blank" style="text-decoration: none;">
+                    <div class="card" style="cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s;">
+                        <h4 style="color: var(--primary);">Anime4K</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">アニメ向けアップスケーリングアルゴリズム</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Quick Reference -->
+        <section class="section animate-in" style="animation-delay: 2.0s;">
+            <h2><span class="icon">⚡</span> クイックリファレンス</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div style="background: var(--bg-light); padding: 20px; border-radius: 8px;">
+                    <h4 style="color: var(--primary); margin-bottom: 10px;">主要ファイル</h4>
+                    <div style="font-family: monospace; font-size: 0.85em; line-height: 1.8;">
+                        <div>📄 MetalVideoRenderer.swift</div>
+                        <div>📄 UpscalingEngine.swift</div>
+                        <div>📄 MetalUpscaler.swift</div>
+                        <div>📄 Upscaling.metal</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-light); padding: 20px; border-radius: 8px;">
+                    <h4 style="color: var(--secondary); margin-bottom: 10px;">主要クラス</h4>
+                    <div style="font-family: monospace; font-size: 0.85em; line-height: 1.8;">
+                        <div>VideoPlayerController</div>
+                        <div>MetalVideoRenderer</div>
+                        <div>UpscalingEngine</div>
+                        <div>MPSUpscaler</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-light); padding: 20px; border-radius: 8px;">
+                    <h4 style="color: var(--accent); margin-bottom: 10px;">主要関数</h4>
+                    <div style="font-family: monospace; font-size: 0.85em; line-height: 1.8;">
+                        <div>renderFrame()</div>
+                        <div>upscaleTexture()</div>
+                        <div>applyAnimeEnhance()</div>
+                        <div>createTexture()</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Guide -->
+        <section class="section animate-in" style="animation-delay: 2.1s;">
+            <h2><span class="icon">⚙️</span> 設定ガイド - 各設定が動画に与える影響</h2>
+
+            <!-- Critical Warning -->
+            <div style="background: rgba(220, 38, 38, 0.15); border: 2px solid #dc2626; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                <h3 style="color: #dc2626; margin-bottom: 10px;">⚠️ 重要: アップスケーリングの有効化条件</h3>
+                <p style="margin-bottom: 15px;">アップスケーリング処理を有効にするには、<strong style="color: #dc2626;">「フィルター有効」をON</strong>にする必要があります。</p>
+                <div class="code-block" style="margin-top: 10px;">
+<span class="comment">// MetalVideoRenderer.swift:134</span>
+<span class="keyword">let</span> needsUpscaling = upscalingEngine.<span class="type">upscalingEnabled</span>
+                    && upscalingEngine.settings.<span class="type">animeFilterSettings.enabled</span>
+
+<span class="comment">// つまり: アップスケーリングが動作するには両方がtrueである必要がある</span>
+<span class="comment">// 1. upscalingEnabled = true (デフォルトでtrue)</span>
+<span class="comment">// 2. animeFilterSettings.enabled = true (設定画面で「フィルター有効」をON)</span>
+                </div>
+                <p style="margin-top: 15px; color: var(--accent);">💡 フィルター効果が不要でもアップスケーリングだけ使いたい場合は、フィルターをONにしてプリセットを「Soft」に設定すると効果が控えめになります。</p>
+            </div>
+
+            <!-- Processing Pipeline -->
+            <h3 style="margin-bottom: 20px;">処理パイプライン（適用順序）</h3>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; background: #1a1a2e; padding: 30px; border-radius: 12px; margin-bottom: 30px;">
+                <div style="text-align: center; padding: 15px 20px; background: rgba(99, 102, 241, 0.2); border-radius: 8px; border: 2px solid var(--primary);">
+                    <div style="font-size: 1.5em;">🎥</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">元フレーム</div>
+                </div>
+                <div style="font-size: 1.5em; color: var(--text-muted);">→</div>
+                <div style="text-align: center; padding: 15px 20px; background: rgba(16, 185, 129, 0.2); border-radius: 8px; border: 2px solid var(--secondary);">
+                    <div style="font-size: 1.5em;">🔍</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">アップスケール</div>
+                    <div style="font-size: 0.7em; color: var(--accent);">+ Animeフィルター</div>
+                </div>
+                <div style="font-size: 1.5em; color: var(--text-muted);">→</div>
+                <div style="text-align: center; padding: 15px 20px; background: rgba(245, 158, 11, 0.2); border-radius: 8px; border: 2px solid var(--accent);">
+                    <div style="font-size: 1.5em;">🎨</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">明度/コントラスト</div>
+                    <div style="font-size: 0.7em; color: var(--text-muted);">彩度/輝度</div>
+                </div>
+                <div style="font-size: 1.5em; color: var(--text-muted);">→</div>
+                <div style="text-align: center; padding: 15px 20px; background: rgba(139, 92, 246, 0.2); border-radius: 8px; border: 2px solid #8b5cf6;">
+                    <div style="font-size: 1.5em;">✨</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">Vibrance</div>
+                </div>
+                <div style="font-size: 1.5em; color: var(--text-muted);">→</div>
+                <div style="text-align: center; padding: 15px 20px; background: rgba(236, 72, 153, 0.2); border-radius: 8px; border: 2px solid #ec4899;">
+                    <div style="font-size: 1.5em;">🎞️</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">Film Grain</div>
+                </div>
+                <div style="font-size: 1.5em; color: var(--text-muted);">→</div>
+                <div style="text-align: center; padding: 15px 20px; background: rgba(99, 102, 241, 0.2); border-radius: 8px; border: 2px solid var(--primary);">
+                    <div style="font-size: 1.5em;">📱</div>
+                    <div style="font-size: 0.9em; margin-top: 5px;">表示</div>
+                </div>
+            </div>
+
+            <!-- Settings Categories -->
+            <div class="tabs" style="margin-bottom: 20px;">
+                <button class="tab active" onclick="showSettingsTab('filter')">フィルター設定</button>
+                <button class="tab" onclick="showSettingsTab('algorithm')">アルゴリズム</button>
+                <button class="tab" onclick="showSettingsTab('quality')">画質調整</button>
+                <button class="tab" onclick="showSettingsTab('postprocess')">後処理</button>
+            </div>
+
+            <!-- Filter Settings Tab -->
+            <div id="settings-filter" class="tab-content active">
+                <h3>フィルター有効 & プリセット</h3>
+
+                <div class="cards" style="margin-top: 20px;">
+                    <div class="card">
+                        <h4 style="color: var(--secondary);">フィルター有効 (Filter Enable)</h4>
+                        <p><strong>マスタースイッチ</strong> - これをONにしないとアップスケーリングが動作しません。</p>
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 6px; margin-top: 10px;">
+                            <strong>ON:</strong> アップスケーリング + Animeフィルター適用<br>
+                            <strong>OFF:</strong> 元の動画をそのまま表示（Fast Path）
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="color: var(--primary);">プリセット (Preset)</h4>
+                        <table style="width: 100%; margin-top: 10px; font-size: 0.9em;">
+                            <tr>
+                                <th>プリセット</th>
+                                <th>線強調</th>
+                                <th>線細化</th>
+                                <th>ノイズ除去</th>
+                                <th>色彩強調</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Standard</strong></td>
+                                <td>50%</td>
+                                <td>40%</td>
+                                <td>50%</td>
+                                <td>30%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Soft</strong></td>
+                                <td>30%</td>
+                                <td>20%</td>
+                                <td>70%</td>
+                                <td>20%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Sharp</strong></td>
+                                <td>70%</td>
+                                <td>60%</td>
+                                <td>30%</td>
+                                <td>40%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Strong</strong></td>
+                                <td>90%</td>
+                                <td>80%</td>
+                                <td>20%</td>
+                                <td>60%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 25px; margin-bottom: 15px;">詳細調整スライダー</h4>
+                <div class="cards">
+                    <div class="card">
+                        <h4><span style="color: #e74c3c;">●</span> 線画強調 (Line Darken)</h4>
+                        <p>アニメの輪郭線を検出し、より暗く（濃く）します。</p>
+                        <div style="display: flex; gap: 20px; margin-top: 15px;">
+                            <div style="flex: 1; text-align: center;">
+                                <div style="background: #2a2a3e; padding: 20px; border-radius: 8px;">
+                                    <div style="font-size: 0.8em; color: var(--text-muted);">弱 (0%)</div>
+                                    <div style="margin: 10px 0; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <div style="width: 60px; height: 2px; background: #888;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em;">薄い線</div>
+                                </div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="background: #2a2a3e; padding: 20px; border-radius: 8px;">
+                                    <div style="font-size: 0.8em; color: var(--text-muted);">強 (100%)</div>
+                                    <div style="margin: 10px 0; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        <div style="width: 60px; height: 4px; background: #000;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75em;">くっきりした線</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4><span style="color: #3498db;">●</span> 線画細線化 (Line Thin)</h4>
+                        <p>太い線を細くしてシャープな印象に。高解像度向け。</p>
+                        <div style="background: rgba(52, 152, 219, 0.1); padding: 12px; border-radius: 6px; margin-top: 10px;">
+                            <strong>推奨:</strong> 4K以上の高解像度では40-60%、1080pでは20-40%
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4><span style="color: #9b59b6;">●</span> ノイズ除去 (Denoise)</h4>
+                        <p>エッジを保持しながら平坦部分のノイズを除去（Bilateral Filter）。</p>
+                        <div style="background: rgba(155, 89, 182, 0.1); padding: 12px; border-radius: 6px; margin-top: 10px;">
+                            <strong>注意:</strong> 高すぎると細かいディテールが失われます
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4><span style="color: #2ecc71;">●</span> 色彩強調 (Color Boost)</h4>
+                        <p>アニメの平坦な塗り部分の彩度を上げて鮮やかに。</p>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <div style="flex: 1; height: 30px; background: linear-gradient(to right, #888, #aaa); border-radius: 4px;"></div>
+                            <div style="font-size: 1.5em;">→</div>
+                            <div style="flex: 1; height: 30px; background: linear-gradient(to right, #4a90d9, #7cb3f0); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Tab -->
+            <div id="settings-algorithm" class="tab-content">
+                <h3>アップスケールアルゴリズム</h3>
+                <p style="margin-bottom: 20px;">動画の種類と求める品質に応じて選択してください。</p>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <tr>
+                            <th>アルゴリズム</th>
+                            <th>処理方式</th>
+                            <th>特徴</th>
+                            <th>推奨用途</th>
+                            <th>GPU負荷</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Bilinear</strong></td>
+                            <td>2×2ピクセル補間</td>
+                            <td>最速、ぼやける</td>
+                            <td>バッテリー節約時</td>
+                            <td><div style="background: var(--secondary); width: 20%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bicubic</strong></td>
+                            <td>4×4ピクセル補間</td>
+                            <td>バランス型</td>
+                            <td>一般的な動画</td>
+                            <td><div style="background: var(--secondary); width: 40%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lanczos</strong></td>
+                            <td>6×6 Sinc関数補間</td>
+                            <td>高品質、シャープ</td>
+                            <td>実写、写真</td>
+                            <td><div style="background: var(--secondary); width: 60%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>MPS</strong></td>
+                            <td>Metal Performance Shaders</td>
+                            <td>Apple最適化</td>
+                            <td>汎用</td>
+                            <td><div style="background: var(--secondary); width: 50%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Anime4K</strong></td>
+                            <td>Lanczos + Animeフィルター</td>
+                            <td>アニメ特化</td>
+                            <td>アニメ、イラスト</td>
+                            <td><div style="background: var(--accent); width: 75%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>MLSR (AI)</strong></td>
+                            <td>Core ML 機械学習</td>
+                            <td>最高品質</td>
+                            <td>静止画、スローモーション</td>
+                            <td><div style="background: var(--accent); width: 90%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adaptive</strong></td>
+                            <td>自動選択</td>
+                            <td>スケール率で切替</td>
+                            <td>様々な解像度</td>
+                            <td><div style="background: var(--primary); width: 60%; height: 16px; border-radius: 4px;"></div></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="code-block" style="margin-top: 20px;">
+<span class="comment">// アルゴリズム選択ロジック (UpscalingEngine.swift)</span>
+<span class="keyword">switch</span> settings.algorithm {
+<span class="keyword">case</span> .bilinear, .bicubic, .lanczos:
+    result = mpsUpscaler?.<span class="function">upscale</span>(..., algorithm: settings.algorithm)
+
+<span class="keyword">case</span> .anime4k:
+    <span class="comment">// Lanczosでアップスケール後、Animeフィルターを適用</span>
+    result = mpsUpscaler?.<span class="function">upscale</span>(..., algorithm: .lanczos)
+    <span class="comment">// → その後 metalUpscaler?.applyAnimeEnhance() が呼ばれる</span>
+
+<span class="keyword">case</span> .mlsr:
+    result = coreMLUpscaler?.<span class="function">upscale</span>(...) ?? <span class="comment">/* fallback to Lanczos */</span>
+}
+                </div>
+            </div>
+
+            <!-- Quality Tab -->
+            <div id="settings-quality" class="tab-content">
+                <h3>画質設定</h3>
+                <p style="margin-bottom: 20px;">これらの設定は<strong style="color: var(--secondary);">フィルターOFFでも適用</strong>されます（独立した処理）。</p>
+
+                <div class="cards">
+                    <div class="card">
+                        <h4>☀️ 明度 (Brightness)</h4>
+                        <p>映像全体の明るさを調整。暗いシーンを見やすくしたり、眩しさを軽減。</p>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-top: 15px;">
+                            <div style="width: 50px; height: 50px; background: #333; border-radius: 8px;"></div>
+                            <input type="range" style="flex: 1;" disabled>
+                            <div style="width: 50px; height: 50px; background: #fff; border-radius: 8px;"></div>
+                        </div>
+                        <div style="font-size: 0.85em; color: var(--text-muted); margin-top: 10px;">
+                            デフォルト: 0（変化なし）、範囲: -1.0 〜 +1.0
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>◐ コントラスト (Contrast)</h4>
+                        <p>明暗の差を調整。高くするとメリハリが出る、低くすると柔らかい印象に。</p>
+                        <div style="display: flex; gap: 20px; margin-top: 15px;">
+                            <div style="flex: 1; text-align: center;">
+                                <div style="background: linear-gradient(#666, #999); height: 40px; border-radius: 4px;"></div>
+                                <div style="font-size: 0.8em; margin-top: 5px;">低コントラスト</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="background: linear-gradient(#000, #fff); height: 40px; border-radius: 4px;"></div>
+                                <div style="font-size: 0.8em; margin-top: 5px;">高コントラスト</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85em; color: var(--text-muted); margin-top: 10px;">
+                            デフォルト: 1.0（変化なし）、範囲: 0.5 〜 2.0
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>🎨 彩度 (Saturation)</h4>
+                        <p>色の鮮やかさを調整。0でモノクロ、高くすると色が濃くなる。</p>
+                        <div style="display: flex; gap: 20px; margin-top: 15px;">
+                            <div style="flex: 1; text-align: center;">
+                                <div style="background: #888; height: 40px; border-radius: 4px;"></div>
+                                <div style="font-size: 0.8em; margin-top: 5px;">低彩度</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="background: linear-gradient(90deg, #ff4444, #44ff44, #4444ff); height: 40px; border-radius: 4px;"></div>
+                                <div style="font-size: 0.8em; margin-top: 5px;">高彩度</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 0.85em; color: var(--text-muted); margin-top: 10px;">
+                            デフォルト: 1.0（変化なし）、範囲: 0.0 〜 2.0
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>🔆 シャープネス (Sharpness)</h4>
+                        <p>エッジを強調してくっきりした印象に。アップスケール後に適用すると効果的。</p>
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 12px; border-radius: 6px; margin-top: 10px;">
+                            <strong>注意:</strong> 高すぎるとノイズやハロー（白い縁取り）が目立つ場合があります
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="margin-bottom: 10px;">適用条件（コード）</h4>
+                    <div class="code-block">
+<span class="comment">// MetalVideoRenderer.swift:135</span>
+<span class="keyword">let</span> needsBrightness = brightness != <span class="string">0.0</span>
+                    || contrast != <span class="string">1.0</span>
+                    || saturation != <span class="string">1.0</span>
+
+<span class="comment">// これらがデフォルト値と異なる場合のみ処理が実行される</span>
+<span class="comment">// フィルターON/OFFに関係なく独立して動作</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post-processing Tab -->
+            <div id="settings-postprocess" class="tab-content">
+                <h3>後処理設定（Post-Processing）</h3>
+                <p style="margin-bottom: 20px;">追加の画質向上オプション。これらはUpscalingEngine経由で処理されます。</p>
+
+                <div class="cards">
+                    <div class="card">
+                        <h4>🔪 シャープネス有効 (Enable Sharpening)</h4>
+                        <p>アップスケール後にエッジ強調を適用。ぼやけを軽減。</p>
+                        <div style="margin-top: 15px;">
+                            <strong>処理:</strong> Unsharp Mask または Laplacian シャープニング
+                        </div>
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 6px; margin-top: 10px;">
+                            ✓ 低解像度ソースのアップスケール時に効果的<br>
+                            ✓ テキストや線画がくっきりする
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>🌫️ ノイズ除去有効 (Enable Denoising)</h4>
+                        <p>圧縮ノイズやグレインを除去。古い動画や低ビットレート動画向け。</p>
+                        <div style="margin-top: 15px;">
+                            <strong>処理:</strong> Temporal + Spatial デノイズ
+                        </div>
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 12px; border-radius: 6px; margin-top: 10px;">
+                            ⚠️ 強すぎると「のっぺり」した印象になる<br>
+                            ⚠️ 意図的なフィルムグレインも除去される
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4>〰️ アンチエイリアス (Enable Anti-Aliasing)</h4>
+                        <p>斜め線やエッジのギザギザ（ジャギー）を滑らかに。</p>
+                        <div style="display: flex; gap: 20px; margin-top: 15px;">
+                            <div style="flex: 1; text-align: center;">
+                                <svg viewBox="0 0 60 60" style="max-width: 80px;">
+                                    <line x1="10" y1="50" x2="50" y2="10" stroke="var(--text)" stroke-width="3"/>
+                                </svg>
+                                <div style="font-size: 0.8em;">OFF: ギザギザ</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <svg viewBox="0 0 60 60" style="max-width: 80px;">
+                                    <line x1="10" y1="50" x2="50" y2="10" stroke="var(--text)" stroke-width="3" style="filter: blur(0.5px);"/>
+                                </svg>
+                                <div style="font-size: 0.8em;">ON: スムーズ</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding: 20px; background: rgba(220, 38, 38, 0.1); border-radius: 8px; border-left: 4px solid #dc2626;">
+                    <h4 style="color: #dc2626; margin-bottom: 10px;">⚠️ 現在の実装状況</h4>
+                    <p>これらの後処理オプションは設定UIに存在しますが、<strong>UpscalingSettings</strong>に保存されます。</p>
+                    <p style="margin-top: 10px;">実際の処理への反映は<strong>upscalingEngine.settings</strong>経由で行われ、フィルターがONの場合にのみアップスケール処理と一緒に適用されます。</p>
+                </div>
+            </div>
+
+            <!-- Summary Table -->
+            <h3 style="margin-top: 40px; margin-bottom: 20px;">設定まとめ: 何がいつ適用されるか</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <tr>
+                        <th>設定カテゴリ</th>
+                        <th>設定項目</th>
+                        <th>フィルターOFF時</th>
+                        <th>フィルターON時</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="2"><strong>アップスケーリング</strong></td>
+                        <td>アルゴリズム選択</td>
+                        <td style="color: #dc2626;">❌ 適用されない</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td>Animeフィルター</td>
+                        <td style="color: #dc2626;">❌ 適用されない</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4"><strong>画質調整</strong></td>
+                        <td>明度 (Brightness)</td>
+                        <td style="color: #10b981;">✅ 独立して適用</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td>コントラスト</td>
+                        <td style="color: #10b981;">✅ 独立して適用</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td>彩度 (Saturation)</td>
+                        <td style="color: #10b981;">✅ 独立して適用</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td>Vibrance</td>
+                        <td style="color: #10b981;">✅ 独立して適用</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="3"><strong>後処理</strong></td>
+                        <td>シャープネス有効</td>
+                        <td style="color: #f59e0b;">⚠️ 設定のみ保存</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td>ノイズ除去有効</td>
+                        <td style="color: #f59e0b;">⚠️ 設定のみ保存</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td>アンチエイリアス</td>
+                        <td style="color: #f59e0b;">⚠️ 設定のみ保存</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                    <tr>
+                        <td><strong>エフェクト</strong></td>
+                        <td>Film Grain</td>
+                        <td style="color: #10b981;">✅ 独立して適用</td>
+                        <td style="color: #10b981;">✅ 適用される</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>UpscalePlayer Architecture Documentation</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Generated with ❤️ | Last Updated: 2026-01-23</p>
+        </footer>
+    </div>
+
+    <script>
+        // Show detail panel
+        const details = {
+            video: {
+                title: '📁 動画ファイル',
+                content: 'サポート形式: mp4, mov, mkv, avi, webm など。AVFoundationが対応する全てのフォーマットを再生可能。'
+            },
+            avplayer: {
+                title: '▶️ AVPlayer',
+                content: 'AppleのAVFoundationフレームワークを使用。ハードウェアデコーダー（VideoToolbox）により効率的にH.264/H.265/VP9などをデコード。'
+            },
+            pixelbuffer: {
+                title: '🖼️ CVPixelBuffer',
+                content: 'BGRA 32bitフォーマットのピクセルバッファ。Metal互換フラグを設定することで、GPU処理への効率的な受け渡しが可能。'
+            },
+            texture: {
+                title: '🔲 MTLTexture',
+                content: 'GPUメモリ上のテクスチャ。CVMetalTextureCacheを使用してCVPixelBufferからゼロコピーで変換。'
+            },
+            gpu: {
+                title: '⚡ GPU処理',
+                content: 'Metal Compute Shaderによる並列処理。アップスケーリング、フィルター適用、VR投影などを高速実行。'
+            },
+            display: {
+                title: '📱 画面表示',
+                content: 'MTKViewを使用して60fpsで表示。CADisplayLinkにより画面リフレッシュレートに同期。'
+            }
+        };
+
+        function showDetail(key) {
+            const panel = document.getElementById('detail-panel');
+            const title = document.getElementById('detail-title');
+            const content = document.getElementById('detail-content');
+
+            title.textContent = details[key].title;
+            content.textContent = details[key].content;
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Settings tab switching
+        function showSettingsTab(tabName) {
+            // Hide all settings tabs
+            document.querySelectorAll('#settings-filter, #settings-algorithm, #settings-quality, #settings-postprocess').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Find the settings section and remove active class from tabs
+            const settingsSection = document.querySelector('#settings-filter')?.closest('.section');
+            if (settingsSection) {
+                settingsSection.querySelectorAll('.tabs .tab').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+            }
+
+            // Show selected tab
+            const targetTab = document.getElementById('settings-' + tabName);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            event.target.classList.add('active');
+        }
+
+        // Shader tab switching
+        function showShaderTab(tabName) {
+            // Hide all shader tabs
+            document.querySelectorAll('#shader-bicubic, #shader-lanczos, #shader-anime, #shader-vr').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all shader tabs
+            const shaderSection = event.target.closest('.section');
+            shaderSection.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('shader-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Simulation
+        let simulationRunning = false;
+
+        function runSimulation() {
+            if (simulationRunning) return;
+            simulationRunning = true;
+
+            const log = document.getElementById('simulation-log');
+            log.innerHTML = '';
+
+            const steps = [
+                { id: 'sim-video', name: '動画フレーム取得', delay: 0, duration: 500 },
+                { id: 'sim-buffer', name: 'CVPixelBuffer変換', delay: 500, duration: 300 },
+                { id: 'sim-gpu', name: 'GPU処理実行', delay: 800, duration: 800 },
+                { id: 'sim-display', name: '画面表示', delay: 1600, duration: 400 }
+            ];
+
+            function addLog(message, color = 'var(--text)') {
+                const time = new Date().toLocaleTimeString();
+                log.innerHTML += `<div style="color: ${color};">[${time}] ${message}</div>`;
+                log.scrollTop = log.scrollHeight;
+            }
+
+            steps.forEach(step => {
+                setTimeout(() => {
+                    const el = document.getElementById(step.id);
+                    el.style.opacity = '1';
+                    el.style.transform = 'scale(1.1)';
+                    el.style.transition = 'all 0.3s';
+                    addLog(`✓ ${step.name}`, 'var(--secondary)');
+
+                    setTimeout(() => {
+                        el.style.transform = 'scale(1)';
+                    }, 200);
+                }, step.delay);
+            });
+
+            setTimeout(() => {
+                addLog('═══════════════════════', 'var(--primary)');
+                addLog('処理完了: 16.67ms (60fps)', 'var(--accent)');
+                addLog('CPU: 45% | GPU: 65% | メモリ: 198MB', 'var(--text-muted)');
+                simulationRunning = false;
+            }, 2200);
+        }
+
+        function resetSimulation() {
+            const boxes = document.querySelectorAll('.sim-box');
+            boxes.forEach(box => {
+                box.style.opacity = '0.3';
+                box.style.transform = 'scale(1)';
+            });
+            document.getElementById('simulation-log').innerHTML = '<div style="color: var(--text-muted);">処理ログがここに表示されます...</div>';
+            simulationRunning = false;
+        }
+
+        // Add hover effects to reference cards
+        document.querySelectorAll('a .card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'var(--primary)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'transparent';
+            });
+        });
+
+        // Add smooth scroll to top button
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            // Create button if it doesn't exist
+            let btn = document.getElementById('scroll-top-btn');
+            if (!btn) {
+                btn = document.createElement('button');
+                btn.id = 'scroll-top-btn';
+                btn.innerHTML = '↑';
+                btn.style.cssText = `
+                    position: fixed;
+                    bottom: 30px;
+                    right: 30px;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    background: var(--primary);
+                    color: white;
+                    border: none;
+                    font-size: 1.5em;
+                    cursor: pointer;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    z-index: 1000;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                `;
+                btn.onclick = function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+                document.body.appendChild(btn);
+            }
+
+            btn.style.opacity = scrollTop > 300 ? '1' : '0';
+        });
+
+        // Add copy button to code blocks
+        document.querySelectorAll('.code-block').forEach(block => {
+            const btn = document.createElement('button');
+            btn.innerHTML = '📋';
+            btn.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: var(--bg-light);
+                border: none;
+                border-radius: 6px;
+                padding: 8px 12px;
+                cursor: pointer;
+                opacity: 0;
+                transition: opacity 0.3s;
+                font-size: 1em;
+            `;
+            btn.title = 'コードをコピー';
+
+            block.style.position = 'relative';
+            block.appendChild(btn);
+
+            block.addEventListener('mouseenter', () => btn.style.opacity = '0.7');
+            block.addEventListener('mouseleave', () => btn.style.opacity = '0');
+            btn.addEventListener('mouseenter', () => btn.style.opacity = '1');
+
+            btn.onclick = function() {
+                const code = block.innerText.replace('📋', '').trim();
+                navigator.clipboard.writeText(code).then(() => {
+                    btn.innerHTML = '✓';
+                    setTimeout(() => btn.innerHTML = '📋', 1000);
+                });
+            };
+        });
+
+        console.log('%c🎬 UpscalePlayer Architecture', 'font-size: 24px; font-weight: bold; color: #6366f1;');
+        console.log('%cドキュメントが正常に読み込まれました', 'font-size: 14px; color: #10b981;');
+    </script>
+</body>
+</html>
