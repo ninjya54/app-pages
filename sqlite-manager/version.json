@@ -7,11 +7,11 @@
         "updateMessageEn": "A new version is available. Please update the app."
     },
     "android": {
-        "minimumVersion": "1.0.0",
-        "latestVersion": "1.0.0",
-        "forceUpdate": false,
-        "updateMessage": "新しいバージョンが利用可能です。アプリを更新してください。",
-        "updateMessageEn": "A new version is available. Please update the app."
+        "minimumVersion": "1.3.2",
+        "latestVersion": "1.3.2",
+        "forceUpdate": true,
+        "updateMessage": "重要な修正が含まれています。アプリを更新してください。\n\n・ファイル読み込みエラーの修正\n・表示言語の修正",
+        "updateMessageEn": "Important fixes include:\n\n- Fix file loading errors\n- Fix display language\n\nPlease update the app."
     },
     "storeUrls": {
         "ios": "https://apps.apple.com/app/sqlite-manager/id6757428319",
