@@ -7,8 +7,8 @@
         "updateMessageEn": "A new version is available. Please update the app."
     },
     "android": {
-        "minimumVersion": "1.3.2",
-        "latestVersion": "1.3.2",
+        "minimumVersion": "1.3.3",
+        "latestVersion": "1.3.3",
         "forceUpdate": true,
         "updateMessage": "重要な修正が含まれています。アプリを更新してください。\n\n・ファイル読み込みエラーの修正\n・表示言語の修正",
         "updateMessageEn": "Important fixes include:\n\n- Fix file loading errors\n- Fix display language\n\nPlease update the app."
