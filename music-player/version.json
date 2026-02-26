@@ -7,14 +7,14 @@
         "updateMessageEn": "A new version is available. Please update the app."
     },
     "android": {
-        "minimumVersion": "1.0.0",
-        "latestVersion": "1.0.0",
-        "forceUpdate": false,
-        "updateMessage": "新しいバージョンが利用可能です。アプリを更新してください。",
-        "updateMessageEn": "A new version is available. Please update the app."
+        "minimumVersion": "1.0.14",
+        "latestVersion": "1.0.14",
+        "forceUpdate": true,
+        "updateMessage": "重要なアップデートがあります。最新バージョンに更新してください。",
+        "updateMessageEn": "An important update is available. Please update to the latest version."
     },
     "storeUrls": {
         "ios": "",
-        "android": "https://play.google.com/store/apps/details?id=com.musicplayer"
+        "android": "https://play.google.com/store/apps/details?id=com.utsugumi.musicplayer"
     }
 }
