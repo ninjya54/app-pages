@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>プライバシーポリシー - Music Player</title>
+    <title>プライバシーポリシー - Sonic Wave Player</title>
     <style>
         * {
             margin: 0;
@@ -56,31 +56,66 @@
             font-size: 0.9em;
             margin-bottom: 24px;
         }
+
+        ul {
+            color: #555;
+            margin: 8px 0 16px 24px;
+        }
+
+        ul li {
+            margin-bottom: 6px;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">← 戻る</a>
+        <a href="index.html" class="back-link">&larr; 戻る</a>
         <h1>プライバシーポリシー</h1>
-        <p class="updated">最終更新日: 2026年1月18日</p>
+        <p class="updated">最終更新日: 2026年3月1日</p>
 
         <h2>1. 収集する情報</h2>
-        <p>Music Playerは、ユーザーのプライバシーを尊重しています。本アプリは以下の情報にアクセスしますが、外部サーバーには送信しません：</p>
-        <p>・デバイス上の音楽ファイル（再生目的のみ）<br>
-            ・マイク権限（ビジュアライザー機能のため、音声は録音されません）</p>
+        <p>Sonic Wave Player は、ユーザーのプライバシーを尊重しています。本アプリは以下の情報にアクセスしますが、開発者が個人情報を直接収集・送信することはありません：</p>
+        <ul>
+            <li>デバイス上の音楽ファイル（再生目的のみ）</li>
+            <li>オーディオセッション情報（ビジュアライザーの周波数解析のため。音声は録音されません）</li>
+            <li>カスタム背景画像（デバイス内に保存、外部送信なし）</li>
+        </ul>
 
         <h2>2. 情報の使用</h2>
-        <p>収集した情報は、アプリの機能を提供するためにのみ使用されます。ユーザーの個人情報を第三者と共有することはありません。</p>
+        <p>アクセスする情報は、アプリの機能を提供するためにのみ使用されます。ユーザーの個人情報を第三者と直接共有することはありません。</p>
 
         <h2>3. データの保存</h2>
-        <p>お気に入りやプレイリストなどの設定情報は、デバイス内にのみ保存され、外部には送信されません。</p>
+        <p>お気に入り、プレイリスト、イコライザー設定、背景画像などのデータは、デバイス内（SharedPreferences、内部ストレージ）にのみ保存されます。</p>
 
         <h2>4. 第三者サービス</h2>
-        <p>本アプリは外部サービスにデータを送信しません。</p>
+        <p>本アプリは以下の第三者サービスを使用しています。各サービスは独自のプライバシーポリシーに基づいてデータを処理します：</p>
+        <ul>
+            <li><strong>Google AdMob</strong>: 広告表示のため。広告IDやデバイス情報がGoogleに送信される場合があります。Premium会員は広告が非表示になります。
+                <br><a href="https://policies.google.com/privacy" style="color: #667eea;">Google プライバシーポリシー</a></li>
+            <li><strong>RevenueCat</strong>: サブスクリプション管理のため。購入情報がRevenueCatサーバーで処理されます。
+                <br><a href="https://www.revenuecat.com/privacy" style="color: #667eea;">RevenueCat プライバシーポリシー</a></li>
+            <li><strong>Google Play Billing</strong>: アプリ内課金の処理のため。</li>
+        </ul>
 
-        <h2>5. お問い合わせ</h2>
-        <p>プライバシーに関するご質問は、サポートページからお問い合わせください。</p>
+        <h2>5. 権限について</h2>
+        <p>本アプリが要求する権限とその目的：</p>
+        <ul>
+            <li><strong>READ_MEDIA_AUDIO</strong> (Android 13+) / <strong>READ_EXTERNAL_STORAGE</strong> (Android 12以前): 音楽ファイルの読み取り</li>
+            <li><strong>FOREGROUND_SERVICE</strong>: バックグラウンド再生の継続</li>
+            <li><strong>POST_NOTIFICATIONS</strong> (Android 13+): 再生コントロール通知の表示</li>
+            <li><strong>MODIFY_AUDIO_SETTINGS</strong>: イコライザー・ビジュアライザーの動作</li>
+            <li><strong>INTERNET</strong>: 広告表示・サブスクリプション管理</li>
+        </ul>
+
+        <h2>6. お子様のプライバシー</h2>
+        <p>本アプリは13歳未満のお子様を対象としていません。13歳未満のお子様から意図的に個人情報を収集することはありません。</p>
+
+        <h2>7. ポリシーの変更</h2>
+        <p>本プライバシーポリシーは随時更新される場合があります。変更はこのページに掲載されます。</p>
+
+        <h2>8. お問い合わせ</h2>
+        <p>プライバシーに関するご質問は、<a href="support.html" style="color: #667eea;">サポートページ</a>からお問い合わせください。</p>
     </div>
 </body>
 

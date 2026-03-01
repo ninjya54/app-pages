@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player - Android音楽プレイヤー</title>
+    <title>Sonic Wave Player - Android高音質音楽プレイヤー</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -19,7 +19,7 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            max-width: 500px;
+            max-width: 560px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
@@ -34,7 +34,8 @@
             justify-content: center;
             font-size: 60px;
         }
-        h1 { color: #333; margin-bottom: 12px; }
+        h1 { color: #333; margin-bottom: 8px; font-size: 1.8em; }
+        .version { color: #999; font-size: 0.85em; margin-bottom: 8px; }
         .subtitle { color: #666; margin-bottom: 24px; }
         .features {
             text-align: left;
@@ -44,10 +45,22 @@
             border-radius: 12px;
         }
         .features li {
-            margin: 8px 0;
+            margin: 10px 0;
             color: #555;
-            list-style-position: inside;
+            list-style: none;
+            padding-left: 4px;
         }
+        .features li::before {
+            margin-right: 8px;
+        }
+        .feature-category {
+            font-weight: bold;
+            color: #333;
+            margin-top: 16px;
+            margin-bottom: 4px;
+            font-size: 0.9em;
+        }
+        .feature-category:first-child { margin-top: 0; }
         .store-button {
             display: inline-block;
             background: #3ddc84;
@@ -58,6 +71,7 @@
             font-weight: bold;
             margin: 8px;
             transition: transform 0.2s;
+            font-size: 1.05em;
         }
         .store-button:hover { transform: scale(1.05); }
         .links { margin-top: 24px; }
@@ -67,26 +81,52 @@
             text-decoration: none;
         }
         .links a:hover { text-decoration: underline; }
+        .premium-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="app-icon">🎵</div>
-        <h1>Music Player</h1>
-        <p class="subtitle">高品質な音楽体験をあなたに</p>
-        
+        <h1>Sonic Wave Player</h1>
+        <p class="version">v1.0.16</p>
+        <p class="subtitle">通知に強い高音質音楽再生アプリ</p>
+
         <ul class="features">
-            <li>リアルタイム周波数ビジュアライザー</li>
-            <li>10バンドイコライザー</li>
-            <li>プレイリスト・お気に入り管理</li>
-            <li>USB/Bluetooth オーディオ対応</li>
-            <li>バックグラウンド再生</li>
+            <p class="feature-category">🎵 音楽再生</p>
+            <li>MP3 / FLAC / AAC / OGG / WAV など幅広いフォーマット対応</li>
+            <li>DSD (DSF/DFF) ハイレゾ音源再生 <span class="premium-badge">Premium</span></li>
+            <li>FFmpeg統合 (APE / WavPack / TTA / DTS 等)</li>
+            <li>通知に強いバックグラウンド再生</li>
+
+            <p class="feature-category">🎚️ 音響処理</p>
+            <li>12バンドグラフィックイコライザー <span class="premium-badge">Premium</span></li>
+            <li>14種類のプリセット＆楽曲別EQ保存</li>
+            <li>ベースブースト / バーチャライザー / ラウドネス</li>
+
+            <p class="feature-category">🌀 ビジュアライザー</p>
+            <li>3Dホログラムビジュアライザー <span class="premium-badge">Premium</span></li>
+            <li>リアルタイム周波数スペクトル (32バンド FFT)</li>
+            <li>カスタム背景画像 (全画面スライドショー)</li>
+
+            <p class="feature-category">🌍 その他</p>
+            <li>7言語対応 (日/英/西/仏/葡/独/韓)</li>
+            <li>プレイリスト / お気に入り / 最近再生</li>
+            <li>3日間無料トライアル</li>
         </ul>
-        
-        <a href="https://play.google.com/store/apps/details?id=com.musicplayer" class="store-button">
+
+        <a href="https://play.google.com/store/apps/details?id=com.utsugumi.musicplayer" class="store-button">
             Google Play でダウンロード
         </a>
-        
+
         <div class="links">
             <a href="privacy.html">プライバシーポリシー</a>
             <a href="support.html">サポート</a>

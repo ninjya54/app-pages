@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サポート - Music Player</title>
+    <title>サポート - Sonic Wave Player</title>
     <style>
         * {
             margin: 0;
@@ -64,8 +64,17 @@
             margin-bottom: 8px;
         }
 
+        .faq-category {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.05em;
+            margin: 28px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #eee;
+        }
+
         .contact-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
             padding: 24px;
             border-radius: 12px;
             color: white;
@@ -74,43 +83,94 @@
         }
 
         .contact-box a {
+            color: #a0c4ff;
+        }
+
+        .contact-box h2 {
             color: white;
+        }
+
+        .app-version {
+            color: #999;
+            font-size: 0.85em;
+            text-align: center;
+            margin-top: 24px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">← 戻る</a>
+        <a href="index.html" class="back-link">&larr; 戻る</a>
         <h1>サポート</h1>
 
         <h2>よくある質問</h2>
 
+        <p class="faq-category">基本操作</p>
+
         <div class="faq">
             <p class="faq-q">Q: 音楽ファイルが表示されません</p>
-            <p>A: アプリに「メディアへのアクセス」権限が付与されているか確認してください。設定 → アプリ → Music Player → 権限 から確認できます。</p>
-        </div>
-
-        <div class="faq">
-            <p class="faq-q">Q: ビジュアライザーが動作しません</p>
-            <p>A: 「マイク」権限が必要です。この権限は音楽を解析するために使用され、音声の録音は行いません。</p>
-        </div>
-
-        <div class="faq">
-            <p class="faq-q">Q: Bluetoothデバイスで再生できません</p>
-            <p>A: Bluetoothデバイスがペアリングされ、メディアオーディオとして接続されているか確認してください。</p>
+            <p>A: アプリに「メディアへのアクセス」権限が付与されているか確認してください。設定 → アプリ → Sonic Wave Player → 権限 から確認できます。Android 13以上では「音声」の権限が必要です。</p>
         </div>
 
         <div class="faq">
             <p class="faq-q">Q: バックグラウンドで再生が止まります</p>
-            <p>A: デバイスのバッテリー最適化からMusic Playerを除外してください。</p>
+            <p>A: デバイスのバッテリー最適化からSonic Wave Playerを除外してください。設定 → バッテリー → バッテリー最適化 → Sonic Wave Player → 最適化しない を選択します。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: 通知が来ると音楽が止まります</p>
+            <p>A: Sonic Wave Playerは通知時も音楽再生を継続する設計です。通話時は自動で一時停止し、通話終了後に再開します。通知音の場合は一時的に音量が低下し、元に戻ります。</p>
+        </div>
+
+        <p class="faq-category">イコライザー・音響</p>
+
+        <div class="faq">
+            <p class="faq-q">Q: 12バンドイコライザーが使えません</p>
+            <p>A: 12バンドイコライザーにはAndroid 9 (Pie) 以上が必要です。Android 8の場合は5バンドイコライザーが自動的に使用されます。また、12バンドEQはプレミアム機能です（初回3日間は無料トライアルで利用可能）。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: ビジュアライザーが動作しません</p>
+            <p>A: ビジュアライザーは音楽再生中のみ動作します。再生を開始してからビジュアライザー画面を確認してください。一部のデバイスではオーディオセッションの制限により動作しない場合があります。</p>
+        </div>
+
+        <p class="faq-category">DSD・ハイレゾ再生</p>
+
+        <div class="faq">
+            <p class="faq-q">Q: DSD (DSF/DFF) ファイルが再生できません</p>
+            <p>A: DSD再生にはFFmpegベースの「高音質モード」を有効にする必要があります。設定画面から高音質モードをONにしてください。DSD再生はプレミアム機能です。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: APE / WavPack / TTA ファイルが再生できません</p>
+            <p>A: これらのフォーマットもFFmpegデコーダーが必要です。設定画面から「高音質モード」を有効にしてください。</p>
+        </div>
+
+        <p class="faq-category">サブスクリプション</p>
+
+        <div class="faq">
+            <p class="faq-q">Q: 無料トライアルとは何ですか？</p>
+            <p>A: 初回インストールから3日間、すべてのプレミアム機能（12バンドEQ、3Dホログラム、DSD再生）を無料でお試しいただけます。トライアル中も広告は表示されます。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: プレミアムの購入を復元したい</p>
+            <p>A: 設定画面の「購入を復元」ボタンから復元できます。同じGoogleアカウントでログインしていることを確認してください。</p>
+        </div>
+
+        <div class="faq">
+            <p class="faq-q">Q: サブスクリプションを解約したい</p>
+            <p>A: Google Play ストア → お支払いと定期購入 → 定期購入 からSonic Wave Playerの定期購入をキャンセルできます。</p>
         </div>
 
         <div class="contact-box">
             <h2 style="margin-top: 0;">お問い合わせ</h2>
-            <p>その他のご質問やバグ報告は、以下のメールアドレスまでご連絡ください。</p>
-            <p><a href="mailto:support@example.com">support@example.com</a></p>
+            <p>その他のご質問やバグ報告は、GitHubからお願いします。</p>
+            <p><a href="https://github.com/ninjya54/music_analyzer_for_android/issues">GitHub Issues</a></p>
         </div>
+
+        <p class="app-version">Sonic Wave Player v1.0.16</p>
     </div>
 </body>
 
