@@ -1,17 +1,17 @@
 {
     "ios": {
         "minimumVersion": "1.1.0",
-        "latestVersion": "1.1.0",
-        "forceUpdate": false,
-        "updateMessage": "新しいバージョンが利用可能です。アプリを更新してください。",
-        "updateMessageEn": "A new version is available. Please update the app."
+        "latestVersion": "1.4.1",
+        "forceUpdate": true,
+        "updateMessage": "新しいバージョン 1.4.1 が利用可能です。\n\n・多言語対応を拡充（中国語・韓国語・スペイン語・フランス語・ドイツ語・ポルトガル語）\n・SQLエディタにカラム名入力支援を追加",
+        "updateMessageEn": "Version 1.4.1 is available.\n\n- Added 6 new languages (Chinese, Korean, Spanish, French, German, Portuguese)\n- Added column name suggestions in SQL editor"
     },
     "android": {
         "minimumVersion": "1.3.3",
-        "latestVersion": "1.3.3",
+        "latestVersion": "1.4.1",
         "forceUpdate": true,
-        "updateMessage": "重要な修正が含まれています。アプリを更新してください。\n\n・ファイル読み込みエラーの修正\n・表示言語の修正",
-        "updateMessageEn": "Important fixes include:\n\n- Fix file loading errors\n- Fix display language\n\nPlease update the app."
+        "updateMessage": "新しいバージョン 1.4.1 が利用可能です。\n\n・多言語対応を拡充（中国語・韓国語・スペイン語・フランス語・ドイツ語・ポルトガル語）\n・SQLエディタにカラム名入力支援を追加",
+        "updateMessageEn": "Version 1.4.1 is available.\n\n- Added 6 new languages (Chinese, Korean, Spanish, French, German, Portuguese)\n- Added column name suggestions in SQL editor"
     },
     "storeUrls": {
         "ios": "https://apps.apple.com/app/sqlite-manager/id6757428319",
