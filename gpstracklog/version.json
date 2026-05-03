@@ -1,12 +1,12 @@
 {
   "ios": {
     "minimumVersion": "1.0.0",
-    "latestVersion": "1.0.1",
+    "latestVersion": "1.1.0",
     "forceUpdate": false,
-    "updateMessage": "新しいバージョンが利用可能です。App Store からアプリを更新してください。",
-    "updateMessageEn": "A new version is available. Please update the app from the App Store."
+    "updateMessage": "新しいバージョンが利用可能です。トラックの完全バックアップ／復元（.gpstrackbackup）やホーム範囲表示の改善などが含まれます。App Store からアプリを更新してください。",
+    "updateMessageEn": "A new version is available. It includes full track backup/restore (.gpstrackbackup) and improvements to the home-range map overlay. Please update the app from the App Store."
   },
   "storeUrls": {
-    "ios": ""
+    "ios": "https://apps.apple.com/jp/app/gps%E3%83%88%E3%83%A9%E3%83%83%E3%82%AF%E3%83%AD%E3%82%B0/id6761366111"
   }
 }
