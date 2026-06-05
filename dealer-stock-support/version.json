@@ -1,0 +1,12 @@
+{
+    "ios": {
+        "minimumVersion": "1.0.0",
+        "latestVersion": "1.0.0",
+        "forceUpdate": false,
+        "updateMessage": "代理店在庫サポートをご利用いただきありがとうございます。",
+        "updateMessageEn": "Thank you for using Dealer Stock Support."
+    },
+    "storeUrls": {
+        "ios": ""
+    }
+}
