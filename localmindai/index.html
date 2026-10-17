@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<!--
+    LocalMindAI の紹介ページ。言語ごとの <section> を assets/lang.js が切り替える。
+    TODO（App Store 公開後）: 各言語の .links 先頭に App Store へのボタンを追加する。
+-->
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalMindAI – On-device AI chat</title>
+    <meta name="description" content="LocalMindAI is an iPhone AI chat that runs entirely on your device and remembers you.">
+    <link rel="stylesheet" href="assets/page.css">
+</head>
+
+<body>
+    <div class="toolbar">
+        <label for="lang-select"><span>Language / 言語</span>
+            <select id="lang-select" aria-label="Language"></select>
+        </label>
+    </div>
+    <noscript>
+        <p>This page can switch languages in your browser. The English text below is shown when scripts are turned off.</p>
+    </noscript>
+
+    <section data-lang="ja" data-page-title="LocalMindAI – 端末内で動く AI チャット"
+        data-page-description="LocalMindAI は、AI の処理をすべて iPhone の中だけで行う、あなたを覚える AI チャットアプリです。">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">AI はこの端末の中だけで動作</p>
+        <p class="lead">iPhone の中だけで動く AI チャットです。モデルを一度ダウンロードすれば、あとは通信なしで会話できます。</p>
+
+        <h2>できること</h2>
+        <ul class="features">
+            <li>
+                <h3>端末内で完結</h3>
+                <p>会話・記憶・写真・音声は端末の外に出ません。通信を行うのは、選んだモデルのダウンロードと広告の表示だけです。</p>
+            </li>
+            <li>
+                <h3>覚えて会話に活かす</h3>
+                <p>呼び名・好み・話し方などを記憶として蓄え、関係のある場面だけ会話に取り込みます。使われない記憶は自然に薄れていきます。</p>
+            </li>
+            <li>
+                <h3>モデルを選べる</h3>
+                <p>Apple の内蔵モデルと、Qwen3.5・LFM2.5・Gemma 4 などの軽量モデルから選べます。Hugging Face の GGUF を自分で追加することもできます。</p>
+            </li>
+            <li>
+                <h3>写真と音声を渡せる</h3>
+                <p>写真や録音を添付できます。画像・音声に対応していないモデルのときは、端末内で文字認識・文字起こしをしてから渡します。</p>
+            </li>
+            <li>
+                <h3>思考モード</h3>
+                <p>対応モデルでは、答える前の考える過程を表示できます。</p>
+            </li>
+            <li>
+                <h3>アカウント不要・応援は任意</h3>
+                <p>サインインは不要です。応援（都度払い）は任意で、一度でも応援すると広告は表示されなくなります。</p>
+            </li>
+        </ul>
+
+        <h2>必要な環境</h2>
+        <ul>
+            <li>iOS 26 以降の iPhone / iPad</li>
+            <li>推奨: iPhone 16 以降（メモリ 8GB）。一覧にはお使いの端末で動かせるモデルだけが表示されます。</li>
+            <li>モデルのダウンロードには通信と空き容量が必要です（モデルにより数百 MB〜数 GB）。</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">サポート</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">プライバシーポリシー</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">利用規約</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← アプリ一覧へ</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="en" data-page-title="LocalMindAI – On-device AI chat"
+        data-page-description="LocalMindAI is an iPhone AI chat that runs entirely on your device and remembers you.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">AI runs entirely on this device</p>
+        <p class="lead">An AI chat that runs inside your iPhone. Download a model once, and you can keep chatting with no network connection.</p>
+
+        <h2>What it does</h2>
+        <ul class="features">
+            <li>
+                <h3>Everything stays on device</h3>
+                <p>Chats, memories, photos and voice never leave your device. The network is used only to download models you choose and to show ads.</p>
+            </li>
+            <li>
+                <h3>Memory that carries over</h3>
+                <p>What to call you, your preferences and how you like to talk are kept as memories and brought into the conversation when they are relevant. Memories that go unused fade on their own.</p>
+            </li>
+            <li>
+                <h3>Choose your model</h3>
+                <p>Pick Apple’s built-in model, or a small open model such as Qwen3.5, LFM2.5 or Gemma 4. You can also add a GGUF model from Hugging Face yourself.</p>
+            </li>
+            <li>
+                <h3>Photos and voice</h3>
+                <p>Attach a photo or record a voice message. For models that cannot see or hear, text is recognized or transcribed on your device first.</p>
+            </li>
+            <li>
+                <h3>Thinking mode</h3>
+                <p>On models that support it, you can see how the model reasons before it answers.</p>
+            </li>
+            <li>
+                <h3>No account, tips optional</h3>
+                <p>There is no sign-in. Tips are one-time and optional, and any tip removes ads for good.</p>
+            </li>
+        </ul>
+
+        <h2>Requirements</h2>
+        <ul>
+            <li>iPhone or iPad with iOS 26 or later</li>
+            <li>Recommended: iPhone 16 or later (8 GB of memory). Only models that run on your device are listed.</li>
+            <li>Downloading a model needs a network connection and free space (a few hundred MB to several GB).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">Support</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">Privacy Policy</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">Terms of Use</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← All apps</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="zh-Hans" data-page-title="LocalMindAI – 完全在设备上运行的 AI 聊天"
+        data-page-description="LocalMindAI 是一款完全在 iPhone 上运行、并会记住你的 AI 聊天应用。">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">AI 完全在此设备上运行</p>
+        <p class="lead">完全在 iPhone 内运行的 AI 聊天。下载一次模型后，即可在没有网络的情况下继续对话。</p>
+
+        <h2>功能</h2>
+        <ul class="features">
+            <li>
+                <h3>全部在设备内完成</h3>
+                <p>对话、记忆、照片和语音不会离开你的设备。仅在下载所选模型和显示广告时联网。</p>
+            </li>
+            <li>
+                <h3>会记住并运用</h3>
+                <p>称呼、喜好、说话方式等会作为记忆积累，并只在相关时带入对话。长期不用的记忆会自然淡去。</p>
+            </li>
+            <li>
+                <h3>可自选模型</h3>
+                <p>可选择 Apple 内置模型，或 Qwen3.5、LFM2.5、Gemma 4 等轻量模型，也可自行添加 Hugging Face 上的 GGUF 模型。</p>
+            </li>
+            <li>
+                <h3>可发送照片和语音</h3>
+                <p>可附加照片或录音。若模型不支持图像或音频，会先在设备内进行文字识别或转写再交给模型。</p>
+            </li>
+            <li>
+                <h3>思考模式</h3>
+                <p>在支持的模型上，可以查看回答前的思考过程。</p>
+            </li>
+            <li>
+                <h3>无需账户，支持为自愿</h3>
+                <p>无需登录。支持（一次性付费）完全自愿，一旦支持过，广告将不再显示。</p>
+            </li>
+        </ul>
+
+        <h2>运行环境</h2>
+        <ul>
+            <li>iOS 26 或更高版本的 iPhone / iPad</li>
+            <li>推荐：iPhone 16 或更新机型（8GB 内存）。列表中仅显示可在你的设备上运行的模型。</li>
+            <li>下载模型需要网络和可用空间（视模型而定，数百 MB 至数 GB）。</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">支持</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">隐私政策</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">使用条款</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← 返回应用列表</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="zh-Hant" data-page-title="LocalMindAI – 完全在裝置上執行的 AI 聊天"
+        data-page-description="LocalMindAI 是一款完全在 iPhone 上執行、並會記住你的 AI 聊天應用程式。">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">AI 完全在此裝置上執行</p>
+        <p class="lead">完全在 iPhone 內執行的 AI 聊天。下載一次模型後，即可在沒有網路的情況下繼續對話。</p>
+
+        <h2>功能</h2>
+        <ul class="features">
+            <li>
+                <h3>全部在裝置內完成</h3>
+                <p>對話、記憶、照片和語音不會離開你的裝置。僅在下載所選模型和顯示廣告時連網。</p>
+            </li>
+            <li>
+                <h3>會記住並運用</h3>
+                <p>稱呼、喜好、說話方式等會作為記憶累積，並只在相關時帶入對話。長期不用的記憶會自然淡去。</p>
+            </li>
+            <li>
+                <h3>可自選模型</h3>
+                <p>可選擇 Apple 內建模型，或 Qwen3.5、LFM2.5、Gemma 4 等輕量模型，也可自行新增 Hugging Face 上的 GGUF 模型。</p>
+            </li>
+            <li>
+                <h3>可傳送照片和語音</h3>
+                <p>可附加照片或錄音。若模型不支援影像或音訊，會先在裝置內進行文字辨識或轉寫再交給模型。</p>
+            </li>
+            <li>
+                <h3>思考模式</h3>
+                <p>在支援的模型上，可以查看回答前的思考過程。</p>
+            </li>
+            <li>
+                <h3>無需帳號，支持為自願</h3>
+                <p>無需登入。支持（一次性付費）完全自願，一旦支持過，廣告將不再顯示。</p>
+            </li>
+        </ul>
+
+        <h2>執行環境</h2>
+        <ul>
+            <li>iOS 26 或更新版本的 iPhone / iPad</li>
+            <li>建議：iPhone 16 或更新機型（8GB 記憶體）。列表中僅顯示可在你的裝置上執行的模型。</li>
+            <li>下載模型需要網路和可用空間（視模型而定，數百 MB 至數 GB）。</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">支援</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">隱私權政策</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">使用條款</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← 返回應用程式列表</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="ko" data-page-title="LocalMindAI – 기기 안에서 동작하는 AI 채팅"
+        data-page-description="LocalMindAI는 AI 처리를 모두 iPhone 안에서 하고, 사용자를 기억하는 AI 채팅 앱입니다.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">AI는 이 기기 안에서만 동작</p>
+        <p class="lead">iPhone 안에서만 동작하는 AI 채팅입니다. 모델을 한 번 내려받으면 그다음은 네트워크 없이도 대화할 수 있습니다.</p>
+
+        <h2>주요 기능</h2>
+        <ul class="features">
+            <li>
+                <h3>기기 안에서 모두 처리</h3>
+                <p>대화·기억·사진·음성은 기기 밖으로 나가지 않습니다. 네트워크는 선택한 모델 다운로드와 광고 표시에만 사용합니다.</p>
+            </li>
+            <li>
+                <h3>기억해서 대화에 반영</h3>
+                <p>부르는 이름, 취향, 말투 등을 기억으로 쌓아 두고 관련이 있을 때만 대화에 가져옵니다. 쓰이지 않는 기억은 자연히 옅어집니다.</p>
+            </li>
+            <li>
+                <h3>모델을 고를 수 있음</h3>
+                <p>Apple 내장 모델과 Qwen3.5·LFM2.5·Gemma 4 같은 경량 모델 중에서 고를 수 있습니다. Hugging Face의 GGUF를 직접 추가할 수도 있습니다.</p>
+            </li>
+            <li>
+                <h3>사진과 음성 전달</h3>
+                <p>사진이나 녹음을 첨부할 수 있습니다. 이미지·음성을 지원하지 않는 모델일 때는 기기 안에서 문자 인식이나 전사를 먼저 거칩니다.</p>
+            </li>
+            <li>
+                <h3>사고 모드</h3>
+                <p>지원하는 모델에서는 답하기 전의 사고 과정을 볼 수 있습니다.</p>
+            </li>
+            <li>
+                <h3>계정 불필요, 응원은 선택</h3>
+                <p>로그인이 필요 없습니다. 응원(1회 결제)은 선택 사항이며, 한 번이라도 응원하면 광고가 표시되지 않습니다.</p>
+            </li>
+        </ul>
+
+        <h2>사용 환경</h2>
+        <ul>
+            <li>iOS 26 이상의 iPhone / iPad</li>
+            <li>권장: iPhone 16 이후(메모리 8GB). 목록에는 사용 중인 기기에서 실행되는 모델만 표시됩니다.</li>
+            <li>모델 다운로드에는 네트워크와 저장 공간이 필요합니다(모델에 따라 수백 MB~수 GB).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">지원</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">개인정보 처리방침</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">이용약관</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← 앱 목록으로</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="es" data-page-title="LocalMindAI – Chat con IA en el dispositivo"
+        data-page-description="LocalMindAI es un chat con IA para iPhone que funciona solo en tu dispositivo y te recuerda.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">La IA funciona solo en este dispositivo</p>
+        <p class="lead">Un chat con IA que funciona dentro de tu iPhone. Descarga un modelo una vez y podrás seguir conversando sin conexión.</p>
+
+        <h2>Qué puede hacer</h2>
+        <ul class="features">
+            <li>
+                <h3>Todo se queda en el dispositivo</h3>
+                <p>Los chats, recuerdos, fotos y voz no salen de tu dispositivo. La red solo se usa para descargar los modelos que elijas y para mostrar anuncios.</p>
+            </li>
+            <li>
+                <h3>Recuerda y lo aplica</h3>
+                <p>Cómo llamarte, tus preferencias y tu forma de hablar se guardan como recuerdos y se añaden a la conversación solo cuando son relevantes. Los recuerdos que no se usan se van difuminando.</p>
+            </li>
+            <li>
+                <h3>Elige el modelo</h3>
+                <p>Puedes usar el modelo integrado de Apple o modelos ligeros como Qwen3.5, LFM2.5 o Gemma 4. También puedes añadir tú mismo un modelo GGUF de Hugging Face.</p>
+            </li>
+            <li>
+                <h3>Fotos y voz</h3>
+                <p>Puedes adjuntar una foto o grabar un mensaje de voz. Si el modelo no admite imagen o audio, primero se reconoce o transcribe el texto en tu dispositivo.</p>
+            </li>
+            <li>
+                <h3>Modo razonamiento</h3>
+                <p>En los modelos compatibles puedes ver cómo razona antes de responder.</p>
+            </li>
+            <li>
+                <h3>Sin cuenta y con propinas opcionales</h3>
+                <p>No hace falta iniciar sesión. Las propinas son de pago único y opcionales, y cualquier propina elimina los anuncios para siempre.</p>
+            </li>
+        </ul>
+
+        <h2>Requisitos</h2>
+        <ul>
+            <li>iPhone o iPad con iOS 26 o posterior</li>
+            <li>Recomendado: iPhone 16 o posterior (8 GB de memoria). Solo se muestran los modelos que funcionan en tu dispositivo.</li>
+            <li>Descargar un modelo requiere conexión y espacio libre (de unos cientos de MB a varios GB).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">Soporte</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">Política de privacidad</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">Términos de uso</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← Todas las apps</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="fr" data-page-title="LocalMindAI – Chat IA sur l’appareil"
+        data-page-description="LocalMindAI est un chat IA pour iPhone qui fonctionne uniquement sur votre appareil et se souvient de vous.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">L’IA fonctionne uniquement sur cet appareil</p>
+        <p class="lead">Un chat IA qui fonctionne dans votre iPhone. Téléchargez un modèle une fois, puis discutez sans connexion réseau.</p>
+
+        <h2>Fonctionnalités</h2>
+        <ul class="features">
+            <li>
+                <h3>Tout reste sur l’appareil</h3>
+                <p>Discussions, souvenirs, photos et voix ne quittent pas votre appareil. Le réseau sert seulement à télécharger les modèles que vous choisissez et à afficher des publicités.</p>
+            </li>
+            <li>
+                <h3>Une mémoire qui sert vraiment</h3>
+                <p>Votre nom d’usage, vos préférences et votre façon de parler sont conservés comme souvenirs et ajoutés à la conversation seulement quand c’est pertinent. Les souvenirs inutilisés s’estompent d’eux-mêmes.</p>
+            </li>
+            <li>
+                <h3>Choisissez votre modèle</h3>
+                <p>Le modèle intégré d’Apple ou des modèles légers comme Qwen3.5, LFM2.5 ou Gemma 4. Vous pouvez aussi ajouter vous-même un modèle GGUF depuis Hugging Face.</p>
+            </li>
+            <li>
+                <h3>Photos et voix</h3>
+                <p>Joignez une photo ou enregistrez un message vocal. Pour les modèles qui ne voient ni n’entendent, le texte est d’abord reconnu ou transcrit sur votre appareil.</p>
+            </li>
+            <li>
+                <h3>Mode raisonnement</h3>
+                <p>Sur les modèles compatibles, vous pouvez voir le raisonnement avant la réponse.</p>
+            </li>
+            <li>
+                <h3>Sans compte, pourboires facultatifs</h3>
+                <p>Aucune connexion requise. Les pourboires sont ponctuels et facultatifs, et tout pourboire supprime définitivement les publicités.</p>
+            </li>
+        </ul>
+
+        <h2>Configuration requise</h2>
+        <ul>
+            <li>iPhone ou iPad avec iOS 26 ou version ultérieure</li>
+            <li>Recommandé : iPhone 16 ou plus récent (8 Go de mémoire). Seuls les modèles compatibles avec votre appareil sont affichés.</li>
+            <li>Le téléchargement d’un modèle nécessite une connexion et de l’espace libre (de quelques centaines de Mo à plusieurs Go).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">Assistance</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">Politique de confidentialité</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">Conditions d’utilisation</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← Toutes les apps</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="de" data-page-title="LocalMindAI – KI-Chat auf dem Gerät"
+        data-page-description="LocalMindAI ist ein KI-Chat für das iPhone, der nur auf deinem Gerät läuft und sich an dich erinnert.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">Die KI läuft nur auf diesem Gerät</p>
+        <p class="lead">Ein KI-Chat, der im iPhone selbst läuft. Modell einmal laden – danach chattest du ohne Netzverbindung.</p>
+
+        <h2>Funktionen</h2>
+        <ul class="features">
+            <li>
+                <h3>Alles bleibt auf dem Gerät</h3>
+                <p>Chats, Erinnerungen, Fotos und Sprache verlassen dein Gerät nicht. Das Netzwerk dient nur dazu, gewählte Modelle zu laden und Werbung anzuzeigen.</p>
+            </li>
+            <li>
+                <h3>Erinnerungen, die einfließen</h3>
+                <p>Anrede, Vorlieben und Sprechweise werden als Erinnerungen gesammelt und nur dann ins Gespräch geholt, wenn sie passen. Was nie gebraucht wird, verblasst von selbst.</p>
+            </li>
+            <li>
+                <h3>Modell frei wählbar</h3>
+                <p>Das eingebaute Apple-Modell oder kleine Modelle wie Qwen3.5, LFM2.5 oder Gemma 4. Du kannst auch selbst ein GGUF-Modell von Hugging Face hinzufügen.</p>
+            </li>
+            <li>
+                <h3>Fotos und Sprache</h3>
+                <p>Hänge ein Foto an oder nimm eine Sprachnachricht auf. Bei Modellen ohne Bild- oder Audio-Unterstützung wird der Text zuerst auf dem Gerät erkannt oder transkribiert.</p>
+            </li>
+            <li>
+                <h3>Denkmodus</h3>
+                <p>Bei Modellen, die das können, siehst du den Denkweg vor der Antwort.</p>
+            </li>
+            <li>
+                <h3>Kein Konto, Trinkgeld freiwillig</h3>
+                <p>Keine Anmeldung nötig. Trinkgelder sind einmalig und freiwillig – ein Trinkgeld entfernt die Werbung dauerhaft.</p>
+            </li>
+        </ul>
+
+        <h2>Voraussetzungen</h2>
+        <ul>
+            <li>iPhone oder iPad mit iOS 26 oder neuer</li>
+            <li>Empfohlen: iPhone 16 oder neuer (8 GB Speicher). Angezeigt werden nur Modelle, die auf deinem Gerät laufen.</li>
+            <li>Für den Modell-Download brauchst du eine Verbindung und freien Speicher (einige Hundert MB bis mehrere GB).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">Support</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">Datenschutzerklärung</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">Nutzungsbedingungen</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← Alle Apps</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="pt-BR" data-page-title="LocalMindAI – Chat com IA no aparelho"
+        data-page-description="O LocalMindAI é um chat com IA para iPhone que roda só no seu aparelho e lembra de você.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">A IA roda só neste aparelho</p>
+        <p class="lead">Um chat com IA que roda dentro do seu iPhone. Baixe um modelo uma vez e continue conversando sem conexão.</p>
+
+        <h2>O que ele faz</h2>
+        <ul class="features">
+            <li>
+                <h3>Tudo fica no aparelho</h3>
+                <p>Conversas, memórias, fotos e voz não saem do seu aparelho. A rede é usada só para baixar os modelos que você escolher e exibir anúncios.</p>
+            </li>
+            <li>
+                <h3>Memória que entra na conversa</h3>
+                <p>Como te chamar, suas preferências e seu jeito de falar ficam guardados como memórias e entram na conversa só quando fazem sentido. Memórias sem uso vão se apagando.</p>
+            </li>
+            <li>
+                <h3>Escolha o modelo</h3>
+                <p>Use o modelo integrado da Apple ou modelos leves como Qwen3.5, LFM2.5 e Gemma 4. Você também pode adicionar um modelo GGUF do Hugging Face.</p>
+            </li>
+            <li>
+                <h3>Fotos e voz</h3>
+                <p>Anexe uma foto ou grave uma mensagem de voz. Em modelos que não veem nem ouvem, o texto é reconhecido ou transcrito antes, no próprio aparelho.</p>
+            </li>
+            <li>
+                <h3>Modo raciocínio</h3>
+                <p>Nos modelos compatíveis, você pode ver o raciocínio antes da resposta.</p>
+            </li>
+            <li>
+                <h3>Sem conta, gorjeta opcional</h3>
+                <p>Não precisa fazer login. As gorjetas são únicas e opcionais, e qualquer gorjeta remove os anúncios de vez.</p>
+            </li>
+        </ul>
+
+        <h2>Requisitos</h2>
+        <ul>
+            <li>iPhone ou iPad com iOS 26 ou mais recente</li>
+            <li>Recomendado: iPhone 16 ou mais novo (8 GB de memória). Só aparecem modelos que funcionam no seu aparelho.</li>
+            <li>Baixar um modelo exige conexão e espaço livre (de algumas centenas de MB a vários GB).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">Suporte</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">Política de Privacidade</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">Termos de Uso</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← Todos os apps</a></p>
+        </footer>
+    </section>
+
+    <section data-lang="it" data-page-title="LocalMindAI – Chat IA sul dispositivo"
+        data-page-description="LocalMindAI è una chat IA per iPhone che funziona solo sul tuo dispositivo e si ricorda di te.">
+        <h1>LocalMindAI</h1>
+        <p class="tagline">L’IA funziona solo su questo dispositivo</p>
+        <p class="lead">Una chat IA che funziona dentro il tuo iPhone. Scarichi un modello una volta e poi conversi senza connessione.</p>
+
+        <h2>Cosa fa</h2>
+        <ul class="features">
+            <li>
+                <h3>Tutto resta sul dispositivo</h3>
+                <p>Chat, ricordi, foto e voce non lasciano il dispositivo. La rete serve solo a scaricare i modelli che scegli e a mostrare gli annunci.</p>
+            </li>
+            <li>
+                <h3>Ricordi che entrano nel discorso</h3>
+                <p>Come chiamarti, le tue preferenze e il tuo modo di parlare vengono conservati come ricordi e richiamati solo quando sono pertinenti. I ricordi non usati sfumano da soli.</p>
+            </li>
+            <li>
+                <h3>Scegli il modello</h3>
+                <p>Il modello integrato di Apple oppure modelli leggeri come Qwen3.5, LFM2.5 o Gemma 4. Puoi anche aggiungere tu un modello GGUF da Hugging Face.</p>
+            </li>
+            <li>
+                <h3>Foto e voce</h3>
+                <p>Allega una foto o registra un messaggio vocale. Con i modelli che non vedono né sentono, il testo viene prima riconosciuto o trascritto sul dispositivo.</p>
+            </li>
+            <li>
+                <h3>Modalità ragionamento</h3>
+                <p>Sui modelli compatibili puoi vedere il ragionamento prima della risposta.</p>
+            </li>
+            <li>
+                <h3>Senza account, mance facoltative</h3>
+                <p>Nessun accesso richiesto. Le mance sono una tantum e facoltative, e una qualsiasi mancia rimuove gli annunci per sempre.</p>
+            </li>
+        </ul>
+
+        <h2>Requisiti</h2>
+        <ul>
+            <li>iPhone o iPad con iOS 26 o successivo</li>
+            <li>Consigliato: iPhone 16 o più recente (8 GB di memoria). Sono elencati solo i modelli che funzionano sul tuo dispositivo.</li>
+            <li>Per scaricare un modello servono connessione e spazio libero (da qualche centinaio di MB a diversi GB).</li>
+        </ul>
+
+        <div class="links">
+            <a data-lang-href="support.html" href="support.html">Assistenza</a>
+            <a class="secondary" data-lang-href="privacy.html" href="privacy.html">Informativa sulla privacy</a>
+            <a class="secondary" data-lang-href="terms.html" href="terms.html">Termini di utilizzo</a>
+        </div>
+
+        <footer>
+            <p><a href="../">← Tutte le app</a></p>
+        </footer>
+    </section>
+
+    <script src="assets/lang.js"></script>
+</body>
+
+</html>

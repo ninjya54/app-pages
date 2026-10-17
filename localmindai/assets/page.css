@@ -1,0 +1,176 @@
+:root {
+    --text: #222;
+    --muted: #667;
+    --accent: #1a73e8;
+    --accent-dark: #1557b0;
+    --border: #e4e7eb;
+    --bg: #fff;
+    --card: #f5f7fa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "PingFang SC", "Noto Sans", sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 20px 48px;
+    line-height: 1.65;
+    color: var(--text);
+    background: var(--bg);
+}
+
+h1 {
+    color: var(--accent);
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+}
+
+h2 {
+    color: #444;
+    margin-top: 1.75rem;
+    font-size: 1.15rem;
+}
+
+h3 {
+    font-size: 1rem;
+    margin: 0 0 4px;
+}
+
+p {
+    margin: 0.6rem 0;
+}
+
+a {
+    color: var(--accent);
+}
+
+ul {
+    padding-left: 1.2rem;
+}
+
+li {
+    margin-bottom: 0.55rem;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.toolbar label {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.toolbar select {
+    margin-left: 8px;
+    font-size: 1rem;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.updated,
+.tagline {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 0 1.25rem;
+}
+
+.lead {
+    font-size: 1.05rem;
+}
+
+.features {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 0;
+}
+
+.features li {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+
+.features p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.faq {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+}
+
+.faq:last-of-type {
+    border-bottom: none;
+}
+
+.faq p {
+    margin: 4px 0 0;
+    font-size: 0.95rem;
+}
+
+.links {
+    margin: 2rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+}
+
+.links a {
+    display: inline-block;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.links a:hover {
+    background: var(--accent-dark);
+}
+
+.links a.secondary {
+    background: var(--card);
+    color: var(--text);
+}
+
+.links a.secondary:hover {
+    background: #e8ebef;
+}
+
+footer {
+    margin-top: 2.5rem;
+    font-size: 0.95rem;
+}
+
+noscript p {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* 言語ごとの本文。JS が選んだ言語だけを表示し、JS が無いときは英語を表示する。 */
+section[data-lang] {
+    display: none;
+}
+
+section[data-lang].is-active {
+    display: block;
+}
+
+html.no-js section[data-lang="en"] {
+    display: block;
+}
+
+html.no-js .toolbar {
+    display: none;
+}
