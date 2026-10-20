@@ -26,7 +26,7 @@ LANGS = ["ja", "en", "zh-Hans", "zh-Hant", "ko", "es", "fr", "de", "pt-BR", "it"
 # LegalInfo（LegalDocumentView.swift）と同じ値
 OPERATOR = "utsugumi"
 CONTACT_EMAIL = "utsugumi@icloud.com"
-EFFECTIVE_DATE = "2026-10-13"
+EFFECTIVE_DATE = "2026-10-20"
 MINIMUM_AGE = "13"
 
 # 各言語の「アプリのトップへ戻る」リンク文言とツールバーのラベル
