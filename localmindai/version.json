@@ -1,0 +1,13 @@
+{
+  "ios": {
+    "minimumVersion": "1.0",
+    "latestVersion": "1.1",
+    "forceUpdate": false,
+    "updateMessage": "新しいバージョン 1.1 があります。\n\n・PDF・テキスト・写真を「資料」に入れておくと、AI がその内容も参考にして答えます\n・写真は複数枚まとめて 1 つの資料にできます",
+    "updateMessageEn": "Version 1.1 is available.\n\n- Add PDFs, text files or photos as Documents, and the AI refers to them when it replies\n- Pick several photos at once to make one document",
+    "updateMessages": {}
+  },
+  "storeUrls": {
+    "ios": "https://apps.apple.com/app/id6822007135"
+  }
+}
