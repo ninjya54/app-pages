@@ -8,10 +8,10 @@
     },
     "android": {
         "minimumVersion": "1.0.16",
-        "latestVersion": "1.0.16",
-        "forceUpdate": true,
-        "updateMessage": "重要なアップデートがあります。最新バージョンに更新してください。",
-        "updateMessageEn": "An important update is available. Please update to the latest version."
+        "latestVersion": "1.2.8",
+        "forceUpdate": false,
+        "updateMessage": "新しいバージョンが利用可能です。USB DACでの安定性と画面表示を改善しました。",
+        "updateMessageEn": "A new version is available with better USB DAC stability and display improvements."
     },
     "storeUrls": {
         "ios": "",
