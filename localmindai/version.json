@@ -1,10 +1,10 @@
 {
   "ios": {
     "minimumVersion": "1.0",
-    "latestVersion": "1.1",
+    "latestVersion": "1.1.1",
     "forceUpdate": false,
-    "updateMessage": "新しいバージョン 1.1 があります。\n\n・PDF・テキスト・写真を「資料」に入れておくと、AI がその内容も参考にして答えます\n・写真は複数枚まとめて 1 つの資料にできます",
-    "updateMessageEn": "Version 1.1 is available.\n\n- Add PDFs, text files or photos as Documents, and the AI refers to them when it replies\n- Pick several photos at once to make one document",
+    "updateMessage": "新しいバージョン 1.1.1 があります。\n\n・資料の検索を改善しました\n・音声：話した言葉を吹き出しに表示し、記憶にも残します\n・Gemma 4（GGUF）の返事がより自然になりました\n・ダウンロードの進み具合と空き容量の表示を改善しました",
+    "updateMessageEn": "Version 1.1.1 is available.\n\n- Improved document search\n- Voice: what you said is shown as text and remembered\n- More natural replies from Gemma 4 (GGUF)\n- Better download progress and storage checks",
     "updateMessages": {}
   },
   "storeUrls": {
