@@ -1,10 +1,10 @@
 {
   "ios": {
     "minimumVersion": "1.0",
-    "latestVersion": "1.1.1",
+    "latestVersion": "1.2.0",
     "forceUpdate": false,
-    "updateMessage": "新しいバージョン 1.1.1 があります。\n\n・資料の検索を改善しました\n・音声：話した言葉を吹き出しに表示し、記憶にも残します\n・Gemma 4（GGUF）の返事がより自然になりました\n・ダウンロードの進み具合と空き容量の表示を改善しました",
-    "updateMessageEn": "Version 1.1.1 is available.\n\n- Improved document search\n- Voice: what you said is shown as text and remembered\n- More natural replies from Gemma 4 (GGUF)\n- Better download progress and storage checks",
+    "updateMessage": "新しいバージョン 1.2.0 があります。\n\n・チャットに写真やファイルを複数まとめて添付できるようになりました\n・チャットからPDFやテキストを直接添付できるボタンを追加しました\n・記憶タブの「資料を追加」で、ファイルを複数まとめて選べるようになりました\n・写真を添付して質問したときに、動作が重くなったりアプリが終了したりすることがある問題を直しました\n・送信後、最新の発言まで表示するようにしました\n・動作の安定性を高め、不要な一時ファイルを自動で片づけるようにしました",
+    "updateMessageEn": "Version 1.2.0 is available.\n\n- Attach several photos or files to a chat message at once\n- New button to attach PDFs and text files right from the chat\n- Select several files at once with \"Add Document\" in the Memory tab\n- Fixed an issue where the app could slow down or quit after you asked about an attached photo\n- The chat now scrolls to the latest message after you send\n- Improved stability, and unneeded temporary files are now cleaned up automatically",
     "updateMessages": {}
   },
   "storeUrls": {
