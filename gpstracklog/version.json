@@ -1,10 +1,26 @@
 {
   "ios": {
     "minimumVersion": "1.0.0",
-    "latestVersion": "1.1.0",
+    "latestVersion": "1.1.4",
     "forceUpdate": false,
-    "updateMessage": "新しいバージョンが利用可能です。トラックの完全バックアップ／復元（.gpstrackbackup）やホーム範囲表示の改善などが含まれます。App Store からアプリを更新してください。",
-    "updateMessageEn": "A new version is available. It includes full track backup/restore (.gpstrackbackup) and improvements to the home-range map overlay. Please update the app from the App Store."
+    "updateMessage": "新しいバージョンが利用可能です。記録中の中心を地図からダッシュボードに変えました。速度、距離、経過、点数、歩数、高度は、地図を出さずに見られます。設定の「開発者にコーヒー」で寄付すると広告が消え、購入は復元できます。App Store からアプリを更新してください。",
+    "updateMessageEn": "A new version is available. Recording now centers on a dashboard instead of the map. You can see speed, distance, elapsed time, point count, steps, and altitude without opening the map. In Settings, “Coffee for the developer” removes ads, and the purchase can be restored. Please update the app from the App Store.",
+    "updateMessages": {
+      "ja": "新しいバージョンが利用可能です。記録中の中心を地図からダッシュボードに変えました。速度、距離、経過、点数、歩数、高度は、地図を出さずに見られます。設定の「開発者にコーヒー」で寄付すると広告が消え、購入は復元できます。App Store からアプリを更新してください。",
+      "en": "A new version is available. Recording now centers on a dashboard instead of the map. You can see speed, distance, elapsed time, point count, steps, and altitude without opening the map. In Settings, “Coffee for the developer” removes ads, and the purchase can be restored. Please update the app from the App Store.",
+      "zh-Hans": "已有新版本。记录中的中心从地图改成了仪表盘。不打开地图也能查看速度、距离、经过时间、点数、步数和高度。在设置中通过「请开发者喝咖啡」捐赠后广告会消失，购买可以恢复。请从 App Store 更新应用。",
+      "zh-Hant": "已有新版本。記錄中的中心從地圖改成了儀表板。不開啟地圖也能查看速度、距離、經過時間、點數、步數和高度。在設定中透過「請開發者喝咖啡」捐贈後廣告會消失，購買可以恢復。請從 App Store 更新 App。",
+      "ko": "새 버전을 사용할 수 있습니다. 기록 중의 중심을 지도에서 대시보드로 바꿨습니다. 속도, 거리, 경과, 포인트 수, 걸음 수, 고도를 지도를 열지 않고 볼 수 있습니다. 설정의 「개발자에게 커피」로 기부하면 광고가 사라지고, 구매는 복원할 수 있습니다. App Store에서 앱을 업데이트해 주세요.",
+      "es": "Hay una nueva versión disponible. La grabación ahora se centra en un panel en lugar del mapa. Puedes ver velocidad, distancia, tiempo, puntos, pasos y altitud sin abrir el mapa. En Ajustes, «Café para el desarrollador» quita los anuncios, y la compra se puede restaurar. Actualiza la app desde el App Store.",
+      "fr": "Une nouvelle version est disponible. L’enregistrement s’appuie maintenant sur un tableau de bord plutôt que sur la carte. Vitesse, distance, durée, nombre de points, pas et altitude se lisent sans ouvrir la carte. Dans Réglages, un don via « Un café pour le développeur » retire les publicités, et l’achat peut être restauré. Mettez à jour l’app depuis l’App Store.",
+      "de": "Eine neue Version ist verfügbar. Die Aufzeichnung stellt jetzt das Dashboard in den Mittelpunkt, nicht die Karte. Tempo, Distanz, Zeit, Punktzahl, Schritte und Höhe sehen Sie, ohne die Karte zu öffnen. Unter Einstellungen entfernt eine Spende über „Kaffee für den Entwickler“ die Werbung, und der Kauf lässt sich wiederherstellen. Bitte aktualisieren Sie die App im App Store.",
+      "pt-BR": "Há uma nova versão disponível. A gravação agora tem o painel como centro, em vez do mapa. Dá para ver velocidade, distância, tempo, pontos, passos e altitude sem abrir o mapa. Em Ajustes, uma doação em “Café para o desenvolvedor” remove os anúncios, e a compra pode ser restaurada. Atualize o app na App Store.",
+      "it": "È disponibile una nuova versione. La registrazione ora ha al centro il pannello, non la mappa. Velocità, distanza, tempo, punti, passi e altitudine si vedono senza aprire la mappa. In Impostazioni, una donazione con «Un caffè per lo sviluppatore» toglie gli annunci, e l’acquisto si può ripristinare. Aggiorna l’app dall’App Store.",
+      "ru": "Доступна новая версия. В центре записи теперь панель, а не карта. Скорость, расстояние, время, число точек, шаги и высоту видно без карты. В Настройках пожертвование «Кофе разработчику» убирает рекламу, а покупку можно восстановить. Обновите приложение в App Store.",
+      "id": "Versi baru tersedia. Pusat perekaman kini dasbor, bukan peta. Kecepatan, jarak, waktu, jumlah titik, langkah, dan ketinggian bisa dilihat tanpa membuka peta. Di Pengaturan, donasi lewat “Kopi untuk pengembang” menghilangkan iklan, dan pembelian dapat dipulihkan. Perbarui app dari App Store.",
+      "th": "มีเวอร์ชันใหม่แล้ว ระหว่างบันทึก ศูนย์กลางเปลี่ยนจากแผนที่เป็นแดชบอร์ด ดูความเร็ว ระยะทาง เวลา จำนวนจุด จำนวนก้าว และความสูงได้โดยไม่เปิดแผนที่ ในการตั้งค่า การบริจาคผ่าน «กาแฟให้ผู้พัฒนา» จะปิดโฆษณา และกู้คืนการซื้อได้ โปรดอัปเดตแอปจาก App Store",
+      "vi": "Đã có phiên bản mới. Khi ghi, trung tâm chuyển từ bản đồ sang bảng điều khiển. Xem tốc độ, quãng đường, thời gian, số điểm, số bước và độ cao mà không cần mở bản đồ. Trong Cài đặt, quyên góp qua «Cà phê cho nhà phát triển» sẽ tắt quảng cáo, và có thể khôi phục giao dịch. Hãy cập nhật ứng dụng từ App Store."
+    }
   },
   "storeUrls": {
     "ios": "https://apps.apple.com/jp/app/gps%E3%83%88%E3%83%A9%E3%83%83%E3%82%AF%E3%83%AD%E3%82%B0/id6761366111"
